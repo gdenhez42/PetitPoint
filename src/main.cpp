@@ -1,6 +1,3 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2015)
-and may not be redistributed without written permission.*/
-
 // Using SDL and standard IO
 #include "FakeBackground.h"
 #include "PetitPoint.h"
@@ -54,7 +51,7 @@ bool init() {
     if (success)
     {
         //Create renderer for window
-        gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+        gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if( gRenderer == NULL )
         {
             printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -136,6 +133,7 @@ int main( int argc, char* args[] )
             {
                 int x = gFakeBackground.getX();
                 int y = gFakeBackground.getY();
+                bool moved = false;
 
                 //Handle events on queue
                 while( SDL_PollEvent( &e ) != 0 )
@@ -160,40 +158,48 @@ int main( int argc, char* args[] )
                                 if (gFakeBackground.CanMoveThere(ppx,ppy-2,ppw,pph))
                                 {
                                     y-=2;
+                                    moved = true;
                                 }
                                 else if (gFakeBackground.CanMoveThere(ppx,ppy-1,ppw,pph))
                                 {
                                     y-=1;
+                                    moved = true;
                                 }
                                 break;
                             case SDLK_DOWN:
                                 if (gFakeBackground.CanMoveThere(ppx,ppy+2,ppw,pph))
                                 {
                                     y+=2;
+                                    moved = true;
                                 }
                                 else if (gFakeBackground.CanMoveThere(ppx,ppy+1,ppw,pph))
                                 {
                                     y+=1;
+                                    moved = true;
                                 }
                                 break;
                             case SDLK_LEFT:
                                 if (gFakeBackground.CanMoveThere(ppx-2,ppy,ppw,pph))
                                 {
                                     x-=2;
+                                    moved = true;
                                 }
                                 else if (gFakeBackground.CanMoveThere(ppx-1,ppy,ppw,pph))
                                 {
                                     x-=1;
+                                    moved = true;
                                 }
                                 break;
                             case SDLK_RIGHT:
                                 if (gFakeBackground.CanMoveThere(ppx+2,ppy,ppw,pph))
                                 {
                                     x+=2;
+                                    moved = true;
                                 }
                                 else if (gFakeBackground.CanMoveThere(ppx+1,ppy,ppw,pph))
                                 {
                                     x+=1;
+                                    moved = true;
                                 }
                                 break;
                             default:
@@ -207,6 +213,7 @@ int main( int argc, char* args[] )
 				SDL_RenderClear( gRenderer );
 
                 gFakeBackground.Update(x,y);
+                gPetitPoint.Update(moved);
                 gFakeBackground.Render();
                 gPetitPoint.Render();
 

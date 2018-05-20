@@ -16,7 +16,7 @@ class PetitPoint
 
         bool Load(SDL_Renderer* p_pRenderer);
         void Init(int x, int y);
-        void Update(int x, int y);
+        void Update(bool moved);
         void Render();
 
     private:
@@ -24,7 +24,9 @@ class PetitPoint
         int m_y;
         int m_w;
         int m_h;
+        int m_frame;
         LTexture m_texture;
+        SDL_Rect m_clips[4];
 };
 
 #endif // PETITPOINT_H
