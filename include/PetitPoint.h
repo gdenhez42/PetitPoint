@@ -14,7 +14,7 @@ class PetitPoint
         int getWidth() {return m_w;}
         int getHeight() {return m_h;}
 
-        bool Load(SDL_Renderer* p_pRenderer);
+        bool Load(const LWindow& window);
         void Init(int x, int y);
         void Update(bool moved);
         void Render();

@@ -2,6 +2,7 @@
 #define FAKEBACKGROUND_H
 
 #include "LTexture.h"
+#include "LWindow.h"
 
 class FakeBackground
 {
@@ -12,7 +13,7 @@ class FakeBackground
         int getX() {return m_x;}
         int getY() {return m_y;}
 
-        bool Load(SDL_Window* p_pWindow, SDL_Renderer* p_pRenderer);
+        bool Load(const LWindow& window);
         void Init(int x, int y);
         void Update(int x, int y);
         void Render();

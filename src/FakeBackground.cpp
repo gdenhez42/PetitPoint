@@ -21,11 +21,12 @@ FakeBackground::~FakeBackground()
     //dtor
 }
 
-bool FakeBackground::Load(SDL_Window* p_pWindow, SDL_Renderer* p_pRenderer)
+bool FakeBackground::Load(const LWindow& window)
 {
-    m_pRenderer = p_pRenderer;
+    m_pRenderer = window.getRenderer();
 
-    SDL_GetWindowSize(p_pWindow,&m_wx,&m_wy);
+    m_wx = window.getWidth();
+    m_wy = window.getHeight();
 
     // Idea: load from file? from resource?
     for (int i = 0; i < FAKEBACKGROUND_W; i++)

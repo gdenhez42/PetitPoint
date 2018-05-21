@@ -1,6 +1,8 @@
 #ifndef LTEXTURE_H
 #define LTEXTURE_H
 
+#include "LWindow.h"
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL.h>
 #include <string>
 
@@ -11,7 +13,10 @@ class LTexture
         virtual ~LTexture();
 
         //Loads image at specified path
-        bool loadFromFile(SDL_Renderer* p_pRenderer, const std::string& path);
+        bool loadFromFile(const LWindow& window, const std::string& path);
+
+        //Creates image from font string
+        bool loadFromRenderedText(const LWindow& window, TTF_Font* p_pFont, std::string textureText, SDL_Color textColor);
 
         //Renders texture at given point
         void render(int x, int y, SDL_Rect* clip = NULL);

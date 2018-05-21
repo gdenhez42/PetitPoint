@@ -34,9 +34,9 @@ PetitPoint::~PetitPoint()
     //dtor
 }
 
-bool PetitPoint::Load(SDL_Renderer* p_pRenderer)
+bool PetitPoint::Load(const LWindow& window)
 {
-    return m_texture.loadFromFile(p_pRenderer, "Images/Alumette.png");
+    return m_texture.loadFromFile(window, "Images/Alumette.png");
 }
 void PetitPoint::Init(int x, int y)
 {
