@@ -2,6 +2,7 @@
 #define TITLESCREENSTATE_H
 
 #include "GameState.h"
+#include "LTexture.h"
 #include <SDL2/SDL_ttf.h>
 
 class TitleScreenState : public GameState
@@ -15,6 +16,8 @@ class TitleScreenState : public GameState
         void Render();
 
     private:
+        int m_ww;
+        int m_wh;
         TTF_Font *m_pFont;
         LTexture m_TextTexture;
 };
