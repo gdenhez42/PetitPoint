@@ -2,6 +2,7 @@
 #define PETITPOINT_H
 
 #include "LTexture.h"
+#include "command.h"
 
 class PetitPoint
 {
@@ -16,17 +17,34 @@ class PetitPoint
 
         bool Load(const LWindow& window);
         void Init(int x, int y);
-        void Update(bool moved);
+        void Update(Command::Command command);
         void Render();
 
     private:
+
+        // dimentions de petit point
         int m_x;
         int m_y;
+        int m_offsetX;
+        int m_offsetY;
         int m_w;
         int m_h;
+
+        // Actions de petit point
         int m_frame;
+        int m_direction;
+        bool m_moved;
+
+        // Images and clips pour le rendering de petit point
         LTexture m_texture;
-        SDL_Rect m_clips[4];
+        SDL_Rect m_frontIdle;
+        SDL_Rect m_frontWalk[2];
+        SDL_Rect m_backIdle;
+        SDL_Rect m_backWalk[2];
+        SDL_Rect m_leftIdle;
+        SDL_Rect m_leftWalk[2];
+        SDL_Rect m_rightIdle;
+        SDL_Rect m_rightWalk[2];
 };
 
 #endif // PETITPOINT_H
