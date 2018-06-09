@@ -11,7 +11,8 @@ namespace {
 
 GameMachine::GameMachine()
 : m_currentState(nullptr),
-  m_Window(SCREEN_WIDTH, SCREEN_HEIGHT)
+  m_Window(SCREEN_WIDTH, SCREEN_HEIGHT),
+  m_ressourceRepo()
 {
     //ctor
 }
@@ -74,6 +75,11 @@ bool GameMachine::Init()
         success = m_Window.Load();
     }
 
+    if (success)
+    {
+        success = m_ressourceRepo.Load(m_Window);
+    }
+
     return success;
 }
 
@@ -81,7 +87,7 @@ void GameMachine::Loop()
 {
     m_currentState = new TitleScreenState();
     // quit event
-    bool quit = !m_currentState->Init(m_Window);
+    bool quit = !m_currentState->Init(m_Window, m_ressourceRepo);
     // event_handler
     SDL_Event e;
 
@@ -105,7 +111,7 @@ void GameMachine::Loop()
             GameState* newState = m_currentState->Update(e);
             if (newState != m_currentState)
             {
-                quit = !newState->Init(m_Window);
+                quit = !newState->Init(m_Window, m_ressourceRepo);
                 m_currentState = newState;
             }
         }

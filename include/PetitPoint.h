@@ -4,6 +4,8 @@
 #include "LTexture.h"
 #include "command.h"
 
+class RessourcesRepo;
+
 class PetitPoint
 {
     public:
@@ -15,8 +17,7 @@ class PetitPoint
         int getWidth() {return m_w;}
         int getHeight() {return m_h;}
 
-        bool Load(const LWindow& window);
-        void Init(int x, int y);
+        void Init(const RessourcesRepo& resources, int x, int y);
         void Update(Command::Command command);
         void Render();
 
@@ -36,7 +37,7 @@ class PetitPoint
         bool m_moved;
 
         // Images and clips pour le rendering de petit point
-        LTexture m_texture;
+        const LTexture* m_ptexture;
         SDL_Rect m_frontIdle;
         SDL_Rect m_frontWalk[2];
         SDL_Rect m_backIdle;

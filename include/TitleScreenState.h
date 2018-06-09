@@ -11,15 +11,15 @@ class TitleScreenState : public GameState
         TitleScreenState();
         virtual ~TitleScreenState();
 
-        bool Init(const LWindow& p_pWindow);
+        bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
         GameState* Update(const SDL_Event& e);
         void Render();
 
     private:
         int m_ww;
         int m_wh;
-        TTF_Font *m_pFont;
-        LTexture m_TextTexture;
+        const LFont *m_pFont;
+        const LTexture *m_pTextTexture;
 };
 
 #endif // TITLESCREENSTATE_H

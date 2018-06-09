@@ -20,6 +20,7 @@ class GameMachine
     private:
         GameState* m_currentState;
         LWindow m_Window;
+        RessourcesRepo m_ressourceRepo;
 };
 
 #endif // GAMEMACHINE_H

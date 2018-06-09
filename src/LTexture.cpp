@@ -55,7 +55,7 @@ bool LTexture::loadFromFile(const LWindow& window, const std::string& path)
     mTexture = newTexture;
     return mTexture != NULL;
 }
-bool LTexture::loadFromRenderedText(const LWindow& window, TTF_Font* p_pFont, std::string textureText, SDL_Color textColor )
+bool LTexture::loadFromRenderedText(const LWindow& window, const LFont& p_pFont, std::string textureText, SDL_Color textColor )
 {
     //Get rid of preexisting texture
     free();
@@ -64,7 +64,7 @@ bool LTexture::loadFromRenderedText(const LWindow& window, TTF_Font* p_pFont, st
     m_pRenderer = window.getRenderer();
 
     //Render text surface
-    SDL_Surface* textSurface = TTF_RenderText_Solid(p_pFont, textureText.c_str(), textColor );
+    SDL_Surface* textSurface = TTF_RenderText_Solid(p_pFont.Font(), textureText.c_str(), textColor );
     if( textSurface == NULL )
     {
         printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -102,7 +102,7 @@ void LTexture::free()
 	}
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip)
+void LTexture::render(int x, int y, SDL_Rect* clip) const
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -118,12 +118,12 @@ void LTexture::render(int x, int y, SDL_Rect* clip)
     SDL_RenderCopy( m_pRenderer, mTexture, clip, &renderQuad );
 }
 
-int LTexture::getWidth()
+int LTexture::getWidth() const
 {
 	return mWidth;
 }
 
-int LTexture::getHeight()
+int LTexture::getHeight() const
 {
 	return mHeight;
 }

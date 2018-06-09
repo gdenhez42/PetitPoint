@@ -6,7 +6,7 @@ TitleScreenState::TitleScreenState()
 : m_ww(),
   m_wh(),
   m_pFont(NULL),
-  m_TextTexture()
+  m_pTextTexture(nullptr)
 {
     //ctor
 }
@@ -14,41 +14,16 @@ TitleScreenState::TitleScreenState()
 TitleScreenState::~TitleScreenState()
 {
     //dtor
-    if (m_pFont != NULL)
-    {
-        TTF_CloseFont(m_pFont);
-        m_pFont = NULL;
-    }
 }
 
-bool TitleScreenState::Init(const LWindow& p_pWindow)
+bool TitleScreenState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo)
 {
     //Loading success flag
     bool success = true;
     m_ww = p_pWindow.getWidth();
     m_wh = p_pWindow.getHeight();
 
-    //Open the font
-    if (success)
-    {
-        m_pFont = TTF_OpenFont( "Fonts/lazy.ttf", 28 );
-        if( m_pFont == NULL )
-        {
-            printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
-            success = false;
-        }
-    }
-
-    if (success)
-    {
-        //Render text
-        SDL_Color textColor = { 0xFF, 0xFF, 0xFF };
-        if(!m_TextTexture.loadFromRenderedText( p_pWindow, m_pFont, "TBR", textColor ))
-        {
-            printf( "Failed to render text texture!\n" );
-            success = false;
-        }
-    }
+    m_pTextTexture = p_ressourceRepo.getTitleText();
 
     return success;
 }
@@ -71,5 +46,5 @@ GameState* TitleScreenState::Update(const SDL_Event& e)
 void TitleScreenState::Render()
 {
     //Render current frame
-    m_TextTexture.render((m_ww - m_TextTexture.getWidth() ) / 2, ( m_wh - m_TextTexture.getHeight() ) / 2 );
+    m_pTextTexture->render((m_ww - m_pTextTexture->getWidth() ) / 2, ( m_wh - m_pTextTexture->getHeight() ) / 2 );
 }

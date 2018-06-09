@@ -13,7 +13,7 @@ class FakeLevelState : public GameState
         FakeLevelState();
         ~FakeLevelState();
 
-        bool Init(const LWindow& p_pWindow);
+        bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
         GameState* Update(const SDL_Event& e);
         void Render();
 

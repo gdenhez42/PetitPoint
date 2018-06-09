@@ -1,4 +1,5 @@
 #include "PetitPoint.h"
+#include "RessourcesRepo.h"
 
 namespace {
 
@@ -38,12 +39,9 @@ PetitPoint::~PetitPoint()
     //dtor
 }
 
-bool PetitPoint::Load(const LWindow& window)
+void PetitPoint::Init(const RessourcesRepo& resources, int x, int y)
 {
-    return m_texture.loadFromFile(window, "Images/PetitPoint.png");
-}
-void PetitPoint::Init(int x, int y)
-{
+    m_ptexture = resources.getPetitPoint();
     m_x = x; m_y = y;
 }
 void PetitPoint::Update(Command::Command command)
@@ -108,41 +106,41 @@ void PetitPoint::Render()
     case DOWN:
         if (m_moved)
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_frontWalk[m_frame/4]);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_frontWalk[m_frame/4]);
         }
         else
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_frontIdle);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_frontIdle);
         }
         break;
     case UP:
         if (m_moved)
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_backWalk[m_frame/4]);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_backWalk[m_frame/4]);
         }
         else
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_backIdle);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_backIdle);
         }
         break;
     case LEFT:
         if (m_moved)
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_leftWalk[m_frame/4]);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_leftWalk[m_frame/4]);
         }
         else
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_leftIdle);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_leftIdle);
         }
         break;
     case RIGHT:
         if (m_moved)
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_rightWalk[m_frame/4]);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_rightWalk[m_frame/4]);
         }
         else
         {
-            m_texture.render(m_x-m_offsetX, m_y-m_offsetY, &m_rightIdle);
+            m_ptexture->render(m_x-m_offsetX, m_y-m_offsetY, &m_rightIdle);
         }
         break;
     }

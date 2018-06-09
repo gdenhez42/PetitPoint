@@ -12,7 +12,7 @@ FakeLevelState::~FakeLevelState()
     //dtor
 }
 
-bool FakeLevelState::Init(const LWindow& p_pWindow)
+bool FakeLevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo)
 {
     bool success = true;
 
@@ -23,12 +23,8 @@ bool FakeLevelState::Init(const LWindow& p_pWindow)
 
     if (success)
     {
-        success = m_PetitPoint.Load(p_pWindow);
-    }
-
-    if (success)
-    {
-        m_PetitPoint.Init(p_pWindow.getWidth()/2 - m_PetitPoint.getWidth()/2,
+        m_PetitPoint.Init(p_ressourceRepo,
+                          p_pWindow.getWidth()/2 - m_PetitPoint.getWidth()/2,
                           p_pWindow.getHeight()/2 - m_PetitPoint.getHeight()/2);
         m_FakeBackground.Init(0,0);
     }
