@@ -5,10 +5,13 @@
 #include "command.h"
 
 class RessourcesRepo;
+class Room;
 
 class PetitPoint
 {
     public:
+        static const int WALK_SPEED;
+
         PetitPoint();
         virtual ~PetitPoint();
 

@@ -9,6 +9,7 @@ class Manoir
         virtual ~Manoir();
 
     private:
+
 };
 
 #endif // MANOIR_H

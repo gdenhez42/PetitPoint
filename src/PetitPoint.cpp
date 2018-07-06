@@ -1,5 +1,6 @@
 #include "PetitPoint.h"
 #include "RessourcesRepo.h"
+#include "Tile.h"
 
 namespace {
 
@@ -7,7 +8,10 @@ namespace {
     enum Directions {
         DOWN,UP,LEFT,RIGHT
     };
+
 }
+
+const int PetitPoint::WALK_SPEED = 2;
 
 PetitPoint::PetitPoint()
 : m_x(0),
@@ -145,3 +149,4 @@ void PetitPoint::Render()
         break;
     }
 }
+

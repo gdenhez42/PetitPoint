@@ -1,4 +1,5 @@
 #include "RessourcesRepo.h"
+#include <fstream>
 
 namespace
 {
@@ -41,9 +42,21 @@ bool RessourcesRepo::Load(const LWindow& window)
         success = m_titleText.loadFromRenderedText( window, m_titleFont, "TBR", textColor );
     }
 
+    // Manoir rooms
+    if (success)
+    {
+    }
+
     return success;
 }
 
 void RessourcesRepo::Free()
 {
 }
+
+const std::string& RessourcesRepo::getMap(const std::string& p_name) const
+{
+    std::map<std::string, std::string>::const_iterator it = m_maps.find(p_name);
+    return it->second;
+}
+

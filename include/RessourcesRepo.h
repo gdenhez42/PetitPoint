@@ -19,13 +19,20 @@ class RessourcesRepo
         bool Load(const LWindow& window);
         void Free();
 
-        const LTexture* getPetitPoint() const {return &m_petitPoint;}
-        const LTexture* getTitleText() const {return &m_titleText;}
+        const LTexture* getPetitPoint() const { return &m_petitPoint; }
+        const LTexture* getTitleText() const { return &m_titleText; }
+        const std::string& getMap(const std::string& p_name) const;
 
     private:
+        // Textures
         LTexture m_petitPoint;
         LTexture m_titleText;
+
+        // Fonts
         LFont m_titleFont;
+
+        // Maps
+        std::map<std::string,std::string> m_maps;
 
 };
 

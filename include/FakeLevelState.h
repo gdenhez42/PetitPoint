@@ -1,11 +1,13 @@
 #ifndef FAKELEVELSTATE_H
 #define FAKELEVELSTATE_H
 
-#include "FakeBackground.h"
 #include "PetitPoint.h"
+#include "Room.h"
 #include "GameState.h"
-#include "LWindow.h"
 #include <SDL2/SDL.h>
+
+class LWindow;
+class RessourcesRepo;
 
 class FakeLevelState : public GameState
 {
@@ -18,7 +20,12 @@ class FakeLevelState : public GameState
         void Render();
 
     private:
-        FakeBackground m_FakeBackground;
+        void MovePetitPointLeft();
+        void MovePetitPointRight();
+        void MovePetitPointUp();
+        void MovePetitPointDown();
+
+        Room m_currentRoom;
         PetitPoint m_PetitPoint;
 };
 
