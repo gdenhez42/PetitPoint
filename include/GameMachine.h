@@ -17,6 +17,9 @@ class GameMachine
         bool Init();
         void Loop();
 
+        // to delete
+        const LWindow& getWindow() {return m_Window;}
+
     private:
         GameState* m_currentState;
         LWindow m_Window;

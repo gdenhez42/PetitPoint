@@ -2,7 +2,7 @@
 
 int main( int argc, char* args[] )
 {
-	GameMachine gameMachine;
+    GameMachine gameMachine;
 
 	bool success = true;
 

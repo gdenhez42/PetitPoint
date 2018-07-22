@@ -1,5 +1,7 @@
 #include "RessourcesRepo.h"
 #include <fstream>
+#include <Tiled.h>
+#include <assert.h>
 
 namespace
 {
@@ -45,6 +47,15 @@ bool RessourcesRepo::Load(const LWindow& window)
     // Manoir rooms
     if (success)
     {
+        success = m_tileSets["Manoir.tsx"].Init(window, "Maps/Manoir.tsx");
+    }
+    if (success)
+    {
+        success = m_tileSets["Flags.tsx"].Init(window, "Maps/Flags.tsx");
+    }
+    if (success)
+    {
+        success = m_maps["Manoir_SJ.tmx"].Init(*this, "Maps/Manoir_SJ.tmx");
     }
 
     return success;
@@ -54,9 +65,15 @@ void RessourcesRepo::Free()
 {
 }
 
-const std::string& RessourcesRepo::getMap(const std::string& p_name) const
+const pp::TileMap& RessourcesRepo::getMap(const std::string& p_name) const
 {
-    std::map<std::string, std::string>::const_iterator it = m_maps.find(p_name);
+    std::map<std::string, pp::TileMap>::const_iterator it = m_maps.find(p_name);
     return it->second;
 }
 
+const pp::TileSet& RessourcesRepo::getTileSet(const std::string& p_name) const
+{
+    std::map<std::string, pp::TileSet>::const_iterator it = m_tileSets.find(p_name);
+    assert(it != m_tileSets.end());
+    return it->second;
+}

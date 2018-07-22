@@ -6,6 +6,11 @@
 #include <string>
 #include <map>
 
+namespace pp {
+    class TileSet;
+    class TileMap;
+}
+
 /*************************************************
 Allow to load and access some resources
 (textures, font, music...)
@@ -21,7 +26,8 @@ class RessourcesRepo
 
         const LTexture* getPetitPoint() const { return &m_petitPoint; }
         const LTexture* getTitleText() const { return &m_titleText; }
-        const std::string& getMap(const std::string& p_name) const;
+        const pp::TileSet& getTileSet(const std::string& p_name) const;
+        const pp::TileMap& getMap(const std::string& p_name) const;
 
     private:
         // Textures
@@ -32,7 +38,8 @@ class RessourcesRepo
         LFont m_titleFont;
 
         // Maps
-        std::map<std::string,std::string> m_maps;
+        std::map<std::string,pp::TileSet> m_tileSets;
+        std::map<std::string,pp::TileMap> m_maps;
 
 };
 
