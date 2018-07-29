@@ -1,5 +1,6 @@
 #include "FakeLevelState.h"
-#include "Tile.h"
+
+namespace pp {
 
 FakeLevelState::FakeLevelState()
 : m_currentRoom(),
@@ -17,10 +18,7 @@ bool FakeLevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ress
 {
     bool success = true;
 
-    if (success)
-    {
-        success = m_currentRoom.Load(p_pWindow, p_ressourceRepo, std::string("Maps/ManoirRoom1"));
-    }
+    m_currentRoom = p_ressourceRepo.getMap("Manoir_SJ.tmx");
 
     if (success)
     {
@@ -92,9 +90,7 @@ void FakeLevelState::MovePetitPointLeft()
 
     while (toMove > 0 && !blocked)
     {
-        const Tile& nextTile1 = m_currentRoom.getTile(ppx-dx-1, ppy);
-        const Tile& nextTile2 = m_currentRoom.getTile(ppx-dx-1, ppy+pph);
-        if (nextTile1.IsBlocked() || nextTile2.IsBlocked())
+        if (m_currentRoom.IsBlocked(ppx-dx-1, ppy) || m_currentRoom.IsBlocked(ppx-dx-1, ppy+pph))
         {
             blocked = true;
         }
@@ -120,9 +116,7 @@ void FakeLevelState::MovePetitPointRight()
 
     while (toMove > 0 && !blocked)
     {
-        const Tile& nextTile1 = m_currentRoom.getTile(ppx+ppw+dx+1, ppy);
-        const Tile& nextTile2 = m_currentRoom.getTile(ppx+ppw+dx+1, ppy+pph);
-        if (nextTile1.IsBlocked() || nextTile2.IsBlocked())
+        if (m_currentRoom.IsBlocked(ppx+ppw+dx+1, ppy) || m_currentRoom.IsBlocked(ppx+ppw+dx+1, ppy+pph))
         {
             blocked = true;
         }
@@ -147,9 +141,7 @@ void FakeLevelState::MovePetitPointUp()
 
     while (toMove > 0 && !blocked)
     {
-        const Tile& nextTile1 = m_currentRoom.getTile(ppx, ppy-dy-1);
-        const Tile& nextTile2 = m_currentRoom.getTile(ppx+ppw, ppy-dy-1);
-        if (nextTile1.IsBlocked() || nextTile2.IsBlocked())
+        if (m_currentRoom.IsBlocked(ppx, ppy-dy-1) || m_currentRoom.IsBlocked(ppx+ppw, ppy-dy-1))
         {
             blocked = true;
         }
@@ -175,9 +167,7 @@ void FakeLevelState::MovePetitPointDown()
 
     while (toMove > 0 && !blocked)
     {
-        const Tile& nextTile1 = m_currentRoom.getTile(ppx, ppy+pph+dy+1);
-        const Tile& nextTile2 = m_currentRoom.getTile(ppx+ppw, ppy+pph+dy+1);
-        if (nextTile1.IsBlocked() || nextTile2.IsBlocked())
+        if (m_currentRoom.IsBlocked(ppx, ppy+pph+dy+1) || m_currentRoom.IsBlocked(ppx+ppw, ppy+pph+dy+1))
         {
             blocked = true;
         }
@@ -188,4 +178,6 @@ void FakeLevelState::MovePetitPointDown()
         }
     }
     m_currentRoom.Update(m_currentRoom.getX(),m_currentRoom.getY()+dy);
+}
+
 }

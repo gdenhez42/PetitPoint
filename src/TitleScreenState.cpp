@@ -35,7 +35,7 @@ GameState* TitleScreenState::Update(const SDL_Event& e)
         switch( e.key.keysym.sym )
         {
             case SDLK_RETURN:
-                GameState* newState = new FakeLevelState();
+                GameState* newState = new pp::FakeLevelState();
                 delete this;
                 return newState;
         }

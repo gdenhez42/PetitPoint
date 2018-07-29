@@ -55,7 +55,7 @@ bool RessourcesRepo::Load(const LWindow& window)
     }
     if (success)
     {
-        success = m_maps["Manoir_SJ.tmx"].Init(*this, "Maps/Manoir_SJ.tmx");
+        success = m_maps["Manoir_SJ.tmx"].Init(window, *this, "Maps/Manoir_SJ.tmx");
     }
 
     return success;

@@ -1,6 +1,5 @@
 #include "PetitPoint.h"
 #include "RessourcesRepo.h"
-#include "Tile.h"
 
 namespace {
 

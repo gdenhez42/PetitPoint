@@ -26,6 +26,9 @@ class LTexture
         int getHeight() const;
 
     private:
+        LTexture(const LTexture&);
+        LTexture& operator=(LTexture&);
+
         // A pointer to the renderer
         SDL_Renderer* m_pRenderer;
 

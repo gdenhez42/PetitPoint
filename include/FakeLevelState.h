@@ -2,12 +2,14 @@
 #define FAKELEVELSTATE_H
 
 #include "PetitPoint.h"
-#include "Room.h"
+#include "Tiled.h"
 #include "GameState.h"
 #include <SDL2/SDL.h>
 
 class LWindow;
 class RessourcesRepo;
+
+namespace pp {
 
 class FakeLevelState : public GameState
 {
@@ -25,8 +27,10 @@ class FakeLevelState : public GameState
         void MovePetitPointUp();
         void MovePetitPointDown();
 
-        Room m_currentRoom;
+        TileMap m_currentRoom;
         PetitPoint m_PetitPoint;
 };
+
+}
 
 #endif // FAKELEVELSTATE_H
