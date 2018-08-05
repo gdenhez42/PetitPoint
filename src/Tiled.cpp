@@ -5,8 +5,6 @@
 namespace {
 
     const char* NUMBERS = "0123456789";
-    const char* BACKGROUND = "Background";
-    const char* WALLS = "Walls";
 }
 
 
@@ -62,24 +60,13 @@ TileMap::TileMap()
   m_width(0),
   m_heigth(0),
   m_tilewidth(0),
-  m_tileheight(0),
-  m_pWindow(nullptr),
-  m_background(nullptr),
-  m_tiles(nullptr),
-  m_x(),
-  m_y()
+  m_tileheight(0)
 {
 
 }
 TileMap::~TileMap()
 {
-    if (m_tiles == nullptr) return;
-    for (int i=0; i<m_heigth; i++)
-    {
-        delete[] m_tiles[i];
-    }
-    delete[] m_tiles;
-    m_tiles = nullptr;
+
 }
 
 TileMap::TileMap(const TileMap& p_tileMap)
@@ -88,38 +75,18 @@ TileMap::TileMap(const TileMap& p_tileMap)
   m_width(p_tileMap.m_width),
   m_heigth(p_tileMap.m_heigth),
   m_tilewidth(p_tileMap.m_tilewidth),
-  m_tileheight(p_tileMap.m_tileheight),
-  m_pWindow(p_tileMap.m_pWindow),
-  m_background(p_tileMap.m_background),
-  m_tiles(nullptr),
-  m_x(p_tileMap.m_x),
-  m_y(p_tileMap.m_y)
+  m_tileheight(p_tileMap.m_tileheight)
 {
-    if (m_heigth > 0) {
-        m_tiles = new Tile*[m_heigth];
-        for (int i=0; i<m_heigth; i++)
-        {
-            m_tiles[i] = new Tile[m_width];
-            memcpy(m_tiles[i], p_tileMap.m_tiles[i], m_width*sizeof(Tile));
-        }
-    }
 }
+
 TileMap::TileMap(TileMap&& p_tileMap)
 : m_tilesets(std::move(p_tileMap.m_tilesets)),
   m_layers(std::move(p_tileMap.m_layers)),
   m_width(p_tileMap.m_width),
   m_heigth(p_tileMap.m_heigth),
   m_tilewidth(p_tileMap.m_tilewidth),
-  m_tileheight(p_tileMap.m_tileheight),
-  m_pWindow(p_tileMap.m_pWindow),
-  m_background(p_tileMap.m_background),
-  m_tiles(nullptr),
-  m_x(p_tileMap.m_x),
-  m_y(p_tileMap.m_y)
+  m_tileheight(p_tileMap.m_tileheight)
 {
-    p_tileMap.m_tiles = nullptr;
-    p_tileMap.m_width = 0;
-    p_tileMap.m_heigth = 0;
 }
 
 TileMap& TileMap::operator=(TileMap p_tileMap)
@@ -130,11 +97,6 @@ TileMap& TileMap::operator=(TileMap p_tileMap)
     std::swap(m_heigth, p_tileMap.m_heigth);
     std::swap(m_tilewidth, p_tileMap.m_tilewidth);
     std::swap(m_tileheight, p_tileMap.m_tileheight);
-    std::swap(m_pWindow, p_tileMap.m_pWindow);
-    std::swap(m_background, p_tileMap.m_background);
-    std::swap(m_tiles, p_tileMap.m_tiles);
-    std::swap(m_x, p_tileMap.m_x);
-    std::swap(m_y, p_tileMap.m_y);
 
     return *this;
 }
@@ -153,11 +115,9 @@ const TileMap::TilesetNode& TileMap::FindTileset(int gid) const
     return *t;
 }
 
-bool TileMap::Init(const LWindow& p_window, const RessourcesRepo& p_ressourceRepo, const std::string& p_filename)
+bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename)
 {
     bool success = true;
-
-    m_pWindow = &p_window;
 
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError err = doc.LoadFile(p_filename.c_str());
@@ -187,6 +147,27 @@ bool TileMap::Init(const LWindow& p_window, const RessourcesRepo& p_ressourceRep
                 LayerNode l(name, width, heigth, content);
                 m_layers.push_back(l);
             }
+            else if (strcmp(elem->Name(), "objectgroup") == 0) {
+                ObjectGroup objgr;
+                objgr.m_name = elem->Attribute("name");
+                tinyxml2::XMLElement* child = elem->FirstChildElement();
+                while (child != nullptr) {
+                    Object obj;
+                    obj.m_id = child->IntAttribute("id");
+                    obj.m_x = child->IntAttribute("x");
+                    obj.m_y = child->IntAttribute("y");
+                    obj.m_w = child->IntAttribute("width");
+                    obj.m_h = child->IntAttribute("height");
+                    tinyxml2::XMLElement* prop = child->FirstChildElement()->FirstChildElement();
+                    while (prop != nullptr) {
+                        obj.m_properties[prop->Attribute("name")] = prop->Attribute("value");
+                        prop  = prop->NextSiblingElement();
+                    }
+                    objgr.m_objects.push_back(obj);
+                    child = child->NextSiblingElement();
+                }
+                m_objects.push_back(objgr);
+            }
             elem = elem->NextSiblingElement();
         }
     }
@@ -195,91 +176,23 @@ bool TileMap::Init(const LWindow& p_window, const RessourcesRepo& p_ressourceRep
         success = false;
     }
 
-    // Find background and walls tileset among tileset read
-    const TilesetNode* backgroundTileset = nullptr;
-    const TilesetNode* wallsTileset = nullptr;
-    const LayerNode* backgroundNode = nullptr;
-    const LayerNode* wallsNode = nullptr;
-    if (success) {
-        for (const LayerNode& layer : m_layers) {
-            if (layer.m_name == BACKGROUND) {
-                backgroundNode = &layer;
-                backgroundTileset = &FindTileset(layer.m_tiles[0][0]);
-            } else if (layer.m_name == WALLS) {
-                wallsNode = &layer;
-                wallsTileset = &FindTileset(layer.m_tiles[0][0]);
-            }
-        }
-    }
-    success |= (backgroundNode != nullptr && wallsNode != nullptr);
-
-    // Initialize tiles of map
-    if (success) {
-        m_background = &backgroundTileset->m_tileSet.m_image;
-        int nbTilesInCol = m_background->getWidth() / m_tilewidth;
-
-        if (m_heigth > 0)
-        {
-            m_tiles = new Tile*[m_heigth];
-            for (int i=0; i<m_heigth; i++)
-            {
-                m_tiles[i] = new Tile[m_width];
-                for (int j=0; j<m_width; j++) {
-                    int index = backgroundNode->m_tiles[i][j] - backgroundTileset->m_firstGid;
-                    int x = (index % nbTilesInCol)*m_tilewidth;
-                    int y = (index / nbTilesInCol)*m_tileheight;
-
-                    m_tiles[i][j].m_rect = {x, y, m_tilewidth, m_tileheight};
-                    m_tiles[i][j].m_blocked = (wallsNode->m_tiles[i][j] - wallsTileset->m_firstGid == 3);
-                }
-            }
-        }
-    }
-
     return success;
 }
 
-void TileMap::Render() {
-    int x = m_x;
-    int y = m_y;
-
-    int wh = m_pWindow->getHeight();
-    int ww = m_pWindow->getWidth();
-
-    int leftmost = x > 0 ? x/m_tilewidth : 0;
-    int rightmost = (x + ww)/m_tilewidth + 1 < m_width ? (x + ww)/m_tilewidth + 1 : m_width;
-
-    int upmost = y > 0 ? y/m_tileheight : 0;
-    int downmost = (y + wh)/m_tileheight + 1 < m_heigth ? (y + wh)/m_tileheight + 1 : m_heigth;
-
-    for (int i = upmost; i < downmost; i++)
-    {
-        for (int j = leftmost; j < rightmost; j++)
-        {
-            int tilePosX = j*m_tilewidth - x;
-            int tilePosY = i*m_tileheight - y;
-            m_background->render(tilePosX, tilePosY, &m_tiles[i][j].m_rect);
+bool TileMap::FindLayerNode(const std::string& p_name,
+                            const LayerNode** p_ppLayer,
+                            const TilesetNode** p_ppTileset) const
+{
+    bool found = false;
+    std::vector<LayerNode>::const_iterator it, itend = m_layers.end();
+    for (it = m_layers.begin(); it != itend && !found; ++it) {
+        if (it->m_name == p_name) {
+            (*p_ppLayer) = &(*it);
+            (*p_ppTileset) = &FindTileset(it->m_tiles[0][0]);
+            found = true;
         }
     }
-}
-
-void TileMap::Update(int x, int y) {
-    m_x = x;
-    m_y = y;
-}
-
-bool TileMap::IsBlocked(int x, int y)
-{
-    // Effective position in the room
-    int ePosX = x + m_x;
-    int ePosY = y + m_y;
-
-    // Index of tile
-    int ix = ePosX/m_tilewidth;
-    int iy = ePosY/m_tileheight;
-
-    return !(ix >= 0 && ix < m_width && iy >= 0 && iy < m_heigth) ||
-           m_tiles[iy][ix].m_blocked;
+    return found;
 }
 
 /*************************************************************************************
@@ -290,6 +203,11 @@ TileMap::TilesetNode::TilesetNode(int p_firstGid, const TileSet& p_tileSet)
 : m_firstGid(p_firstGid),
   m_tileSet(p_tileSet)
 {
+}
+
+const LTexture* TileMap::TilesetNode::GetTexture() const
+{
+    return &m_tileSet.m_image;
 }
 
 
@@ -363,7 +281,6 @@ TileMap::LayerNode& TileMap::LayerNode::operator=(LayerNode p_layerNode)
     m_heigth = p_layerNode.m_heigth;
     return *this;
 }
-
 
 }
 

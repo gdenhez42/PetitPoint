@@ -16,9 +16,9 @@ PetitPoint::PetitPoint()
 : m_x(0),
   m_y(0),
   m_offsetX(12),
-  m_offsetY(5),
+  m_offsetY(40),
   m_w(40),
-  m_h(57),
+  m_h(22),
   m_frame(0),
   m_direction(DOWN),
   m_moved(false)

@@ -47,7 +47,7 @@ bool RessourcesRepo::Load(const LWindow& window)
     // Manoir rooms
     if (success)
     {
-        success = m_tileSets["Manoir.tsx"].Init(window, "Maps/Manoir.tsx");
+        success = m_tileSets["Manoir2.tsx"].Init(window, "Maps/Manoir2.tsx");
     }
     if (success)
     {
@@ -55,7 +55,8 @@ bool RessourcesRepo::Load(const LWindow& window)
     }
     if (success)
     {
-        success = m_maps["Manoir_SJ.tmx"].Init(window, *this, "Maps/Manoir_SJ.tmx");
+        success = m_maps["Manoir2_SJ.tmx"].Init(*this, "Maps/Manoir2_SJ.tmx");
+        success = m_maps["Manoir2_SA.tmx"].Init(*this, "Maps/Manoir2_SA.tmx");
     }
 
     return success;

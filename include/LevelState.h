@@ -5,17 +5,20 @@
 #include "Tiled.h"
 #include "GameState.h"
 #include <SDL2/SDL.h>
+#include <memory>
 
 class LWindow;
 class RessourcesRepo;
 
 namespace pp {
 
-class FakeLevelState : public GameState
+class LMap;
+
+class LevelState : public GameState
 {
     public:
-        FakeLevelState();
-        ~FakeLevelState();
+        LevelState();
+        ~LevelState();
 
         bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
         GameState* Update(const SDL_Event& e);
@@ -27,7 +30,8 @@ class FakeLevelState : public GameState
         void MovePetitPointUp();
         void MovePetitPointDown();
 
-        TileMap m_currentRoom;
+        std::map<std::string, LMap> m_maps;
+        LMap* m_currentRoom;
         PetitPoint m_PetitPoint;
 };
 

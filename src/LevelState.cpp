@@ -1,28 +1,31 @@
-#include "FakeLevelState.h"
+#include "LevelState.h"
+#include "LMap.h"
 
 namespace pp {
 
-FakeLevelState::FakeLevelState()
-: m_currentRoom(),
+LevelState::LevelState()
+: m_currentRoom(nullptr),
   m_PetitPoint()
 {
     //ctor
 }
 
-FakeLevelState::~FakeLevelState()
+LevelState::~LevelState()
 {
     //dtor
 }
 
-bool FakeLevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo)
+bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo)
 {
     bool success = true;
 
-    m_currentRoom = p_ressourceRepo.getMap("Manoir_SJ.tmx");
+    success = m_maps["Manoir2_SJ"].Init(p_pWindow, p_ressourceRepo, "Manoir2_SJ.tmx");
 
     if (success)
     {
-        m_currentRoom.Update(0,0);
+        m_currentRoom = &m_maps["Manoir2_SJ"];
+
+        m_currentRoom->Update(0,0);
         m_PetitPoint.Init(p_ressourceRepo,
                           p_pWindow.getWidth()/2 - m_PetitPoint.getWidth()/2,
                           p_pWindow.getHeight()/2 - m_PetitPoint.getHeight()/2);
@@ -31,7 +34,7 @@ bool FakeLevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ress
     return success;
 }
 
-GameState* FakeLevelState::Update(const SDL_Event& e)
+GameState* LevelState::Update(const SDL_Event& e)
 {
     Command::Command command = Command::NONE;
 
@@ -67,9 +70,9 @@ GameState* FakeLevelState::Update(const SDL_Event& e)
 
     return this;
 }
-void FakeLevelState::Render()
+void LevelState::Render()
 {
-    m_currentRoom.Render();
+    m_currentRoom->Render();
     m_PetitPoint.Render();
 }
 
@@ -77,7 +80,7 @@ void FakeLevelState::Render()
 There must be a better way to do the walking part :-(
 ***********************************************************/
 
-void FakeLevelState::MovePetitPointLeft()
+void LevelState::MovePetitPointLeft()
 {
     int ppx = m_PetitPoint.getX();
     int ppy = m_PetitPoint.getY();
@@ -90,7 +93,7 @@ void FakeLevelState::MovePetitPointLeft()
 
     while (toMove > 0 && !blocked)
     {
-        if (m_currentRoom.IsBlocked(ppx-dx-1, ppy) || m_currentRoom.IsBlocked(ppx-dx-1, ppy+pph))
+        if (m_currentRoom->isBlocked(ppx-dx-1, ppy) || m_currentRoom->isBlocked(ppx-dx-1, ppy+pph))
         {
             blocked = true;
         }
@@ -100,9 +103,9 @@ void FakeLevelState::MovePetitPointLeft()
             toMove--;
         }
     }
-    m_currentRoom.Update(m_currentRoom.getX()-dx,m_currentRoom.getY());
+    m_currentRoom->Update(m_currentRoom->getX()-dx,m_currentRoom->getY());
 }
-void FakeLevelState::MovePetitPointRight()
+void LevelState::MovePetitPointRight()
 {
     int ppx = m_PetitPoint.getX();
     int ppy = m_PetitPoint.getY();
@@ -116,7 +119,7 @@ void FakeLevelState::MovePetitPointRight()
 
     while (toMove > 0 && !blocked)
     {
-        if (m_currentRoom.IsBlocked(ppx+ppw+dx+1, ppy) || m_currentRoom.IsBlocked(ppx+ppw+dx+1, ppy+pph))
+        if (m_currentRoom->isBlocked(ppx+ppw+dx+1, ppy) || m_currentRoom->isBlocked(ppx+ppw+dx+1, ppy+pph))
         {
             blocked = true;
         }
@@ -126,9 +129,9 @@ void FakeLevelState::MovePetitPointRight()
             toMove--;
         }
     }
-    m_currentRoom.Update(m_currentRoom.getX()+dx,m_currentRoom.getY());
+    m_currentRoom->Update(m_currentRoom->getX()+dx,m_currentRoom->getY());
 }
-void FakeLevelState::MovePetitPointUp()
+void LevelState::MovePetitPointUp()
 {
     int ppx = m_PetitPoint.getX();
     int ppy = m_PetitPoint.getY();
@@ -141,7 +144,7 @@ void FakeLevelState::MovePetitPointUp()
 
     while (toMove > 0 && !blocked)
     {
-        if (m_currentRoom.IsBlocked(ppx, ppy-dy-1) || m_currentRoom.IsBlocked(ppx+ppw, ppy-dy-1))
+        if (m_currentRoom->isBlocked(ppx, ppy-dy-1) || m_currentRoom->isBlocked(ppx+ppw, ppy-dy-1))
         {
             blocked = true;
         }
@@ -151,9 +154,9 @@ void FakeLevelState::MovePetitPointUp()
             toMove--;
         }
     }
-    m_currentRoom.Update(m_currentRoom.getX(),m_currentRoom.getY()-dy);
+    m_currentRoom->Update(m_currentRoom->getX(),m_currentRoom->getY()-dy);
 }
-void FakeLevelState::MovePetitPointDown()
+void LevelState::MovePetitPointDown()
 {
     int ppx = m_PetitPoint.getX();
     int ppy = m_PetitPoint.getY();
@@ -167,7 +170,7 @@ void FakeLevelState::MovePetitPointDown()
 
     while (toMove > 0 && !blocked)
     {
-        if (m_currentRoom.IsBlocked(ppx, ppy+pph+dy+1) || m_currentRoom.IsBlocked(ppx+ppw, ppy+pph+dy+1))
+        if (m_currentRoom->isBlocked(ppx, ppy+pph+dy+1) || m_currentRoom->isBlocked(ppx+ppw, ppy+pph+dy+1))
         {
             blocked = true;
         }
@@ -177,7 +180,7 @@ void FakeLevelState::MovePetitPointDown()
             toMove--;
         }
     }
-    m_currentRoom.Update(m_currentRoom.getX(),m_currentRoom.getY()+dy);
+    m_currentRoom->Update(m_currentRoom->getX(),m_currentRoom->getY()+dy);
 }
 
 }

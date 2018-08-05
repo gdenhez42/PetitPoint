@@ -1,5 +1,5 @@
 #include "TitleScreenState.h"
-#include "FakeLevelState.h"
+#include "LevelState.h"
 
 
 TitleScreenState::TitleScreenState()
@@ -35,7 +35,7 @@ GameState* TitleScreenState::Update(const SDL_Event& e)
         switch( e.key.keysym.sym )
         {
             case SDLK_RETURN:
-                GameState* newState = new pp::FakeLevelState();
+                GameState* newState = new pp::LevelState();
                 delete this;
                 return newState;
         }
