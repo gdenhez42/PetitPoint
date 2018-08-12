@@ -195,6 +195,19 @@ bool TileMap::FindLayerNode(const std::string& p_name,
     return found;
 }
 
+bool TileMap::FindObjectGroup(const std::string& p_name, const ObjectGroup** p_ppObj) const
+{
+    bool found = false;
+    std::vector<ObjectGroup>::const_iterator it, itend = m_objects.end();
+    for (it = m_objects.begin(); it != itend && !found; ++it) {
+        if (it->m_name == p_name) {
+            (*p_ppObj) = &(*it);
+            found = true;
+        }
+    }
+    return found;
+}
+
 /*************************************************************************************
  struct TileSetNode
 *************************************************************************************/

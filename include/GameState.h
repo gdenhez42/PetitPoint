@@ -17,7 +17,7 @@ class GameState
         virtual ~GameState();
 
         virtual bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo)=0;
-        virtual GameState* Update(const SDL_Event& e)=0;
+        virtual GameState* Update(const SDL_Event& e, const Uint8*)=0;
         virtual void Render()=0;
 
     private:

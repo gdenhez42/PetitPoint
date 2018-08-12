@@ -1,6 +1,7 @@
 #include "LevelState.h"
 #include "LMap.h"
 
+
 namespace pp {
 
 LevelState::LevelState()
@@ -19,7 +20,9 @@ bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourc
 {
     bool success = true;
 
-    success = m_maps["Manoir2_SJ"].Init(p_pWindow, p_ressourceRepo, "Manoir2_SJ.tmx");
+    // Get the maps of this level
+    success = m_maps["Manoir2_SJ"].Init(p_pWindow, p_ressourceRepo, "Manoir2_SJ.tmx", "Manoir2_SJ");
+    success &= m_maps["Manoir2_SA"].Init(p_pWindow, p_ressourceRepo, "Manoir2_SA.tmx", "Manoir2_SA");
 
     if (success)
     {
@@ -29,41 +32,39 @@ bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourc
         m_PetitPoint.Init(p_ressourceRepo,
                           p_pWindow.getWidth()/2 - m_PetitPoint.getWidth()/2,
                           p_pWindow.getHeight()/2 - m_PetitPoint.getHeight()/2);
+
+        std::map<std::string, LMap>::const_iterator it, itend = m_maps.end();
+        for(it = m_maps.begin(); it != itend; ++it) {
+            const std::vector<std::string>& warps = it->second.getWarps();
+            std::vector<std::string>::const_iterator it2, it2end = warps.end();
+            for (it2 = warps.begin(); it2 != it2end; ++it2) {
+                m_warps[*it2].push_back(it->first);
+            }
+        }
     }
 
     return success;
 }
 
-GameState* LevelState::Update(const SDL_Event& e)
+GameState* LevelState::Update(const SDL_Event& e, const Uint8* keyboardState)
 {
     Command::Command command = Command::NONE;
 
-    //User presses a key
-    if( e.type == SDL_KEYDOWN )
-    {
-        //Select surfaces based on key press
-        switch( e.key.keysym.sym )
-        {
-            case SDLK_UP:
-                MovePetitPointUp();
-                command = Command::MOVE_UP;
-                break;
-            case SDLK_DOWN:
-                MovePetitPointDown();
-                command = Command::MOVE_DOWN;
-                break;
-            case SDLK_LEFT:
-                MovePetitPointLeft();
-                command = Command::MOVE_LEFT;
-                break;
-            case SDLK_RIGHT:
-                MovePetitPointRight();
-                command = Command::MOVE_RIGHT;
-                break;
-            default:
-
-                break;
-        }
+    if (keyboardState[SDL_SCANCODE_UP]) {
+        MovePetitPoint(UP);
+        command = Command::MOVE_UP;
+    }
+    else if (keyboardState[SDL_SCANCODE_DOWN]) {
+        MovePetitPoint(DOWN);
+        command = Command::MOVE_DOWN;
+    }
+    else if (keyboardState[SDL_SCANCODE_LEFT]) {
+        MovePetitPoint(LEFT);
+        command = Command::MOVE_LEFT;
+    }
+    else if (keyboardState[SDL_SCANCODE_RIGHT]) {
+        MovePetitPoint(RIGHT);
+        command = Command::MOVE_RIGHT;
     }
 
     m_PetitPoint.Update(command);
@@ -79,108 +80,100 @@ void LevelState::Render()
 /***********************************************************
 There must be a better way to do the walking part :-(
 ***********************************************************/
-
-void LevelState::MovePetitPointLeft()
+void LevelState::MovePetitPoint(Dir d)
 {
     int ppx = m_PetitPoint.getX();
     int ppy = m_PetitPoint.getY();
+    int ppw = m_PetitPoint.getWidth();
     int pph = m_PetitPoint.getHeight();
 
+    bool inWarp = m_currentRoom->inWarp(ppx,ppy,ppw,pph);
     int dx = 0;
-
-    bool blocked = false;
-    int toMove = PetitPoint::WALK_SPEED;
-
-    while (toMove > 0 && !blocked)
-    {
-        if (m_currentRoom->isBlocked(ppx-dx-1, ppy) || m_currentRoom->isBlocked(ppx-dx-1, ppy+pph))
-        {
-            blocked = true;
-        }
-        else
-        {
-            dx++;
-            toMove--;
-        }
-    }
-    m_currentRoom->Update(m_currentRoom->getX()-dx,m_currentRoom->getY());
-}
-void LevelState::MovePetitPointRight()
-{
-    int ppx = m_PetitPoint.getX();
-    int ppy = m_PetitPoint.getY();
-    int ppw = m_PetitPoint.getWidth();
-    int pph = m_PetitPoint.getHeight();
-
-    int dx = 0;
-
-    bool blocked = false;
-    int toMove = PetitPoint::WALK_SPEED;
-
-    while (toMove > 0 && !blocked)
-    {
-        if (m_currentRoom->isBlocked(ppx+ppw+dx+1, ppy) || m_currentRoom->isBlocked(ppx+ppw+dx+1, ppy+pph))
-        {
-            blocked = true;
-        }
-        else
-        {
-            dx++;
-            toMove--;
-        }
-    }
-    m_currentRoom->Update(m_currentRoom->getX()+dx,m_currentRoom->getY());
-}
-void LevelState::MovePetitPointUp()
-{
-    int ppx = m_PetitPoint.getX();
-    int ppy = m_PetitPoint.getY();
-    int ppw = m_PetitPoint.getWidth();
-
     int dy = 0;
-
-    bool blocked = false;
     int toMove = PetitPoint::WALK_SPEED;
+    bool warped = false;
+    std::string warp;
 
-    while (toMove > 0 && !blocked)
+    while (toMove > 0)
     {
-        if (m_currentRoom->isBlocked(ppx, ppy-dy-1) || m_currentRoom->isBlocked(ppx+ppw, ppy-dy-1))
+        int x1, y1, x2, y2;
+
+        switch (d) {
+            case LEFT:
+                x1 = ppx+dx-1;
+                y1 = ppy;
+                x2 = ppx+dx-1;
+                y2 = ppy+pph;
+                break;
+            case RIGHT:
+                x1 = ppx+ppw+dx+1;
+                y1 = ppy+pph;
+                x2 = ppx+ppw+dx+1;
+                y2 = ppy+pph;
+                break;
+            case UP:
+                x1 = ppx;
+                y1 = ppy+dy-1;
+                x2 = ppx+ppw;
+                y2 = ppy+dy-1;
+                break;
+            case DOWN:
+                x1 = ppx;
+                y1 = ppy+pph+dy+1;
+                x2 = ppx+ppw;
+                y2 = ppy+pph+dy+1;
+                break;
+        }
+
+        if (m_currentRoom->isBlocked(x1, y1) || m_currentRoom->isBlocked(x2, y2))
         {
-            blocked = true;
+            toMove = 0;
+        }
+        else if (!inWarp && (m_currentRoom->isWarp(x1, y1, warp) || m_currentRoom->isWarp(x2, y2, warp)))
+        {
+            toMove = 0;
+            warped = true;
         }
         else
         {
-            dy++;
+            switch (d) {
+                case LEFT:
+                    dx--;
+                    break;
+                case RIGHT:
+                    dx++;
+                    break;
+                case UP:
+                    dy--;
+                    break;
+                case DOWN:
+                    dy++;
+                    break;
+            }
             toMove--;
         }
     }
-    m_currentRoom->Update(m_currentRoom->getX(),m_currentRoom->getY()-dy);
+
+    if (warped) {
+        Warp(warp);
+    } else {
+        m_currentRoom->Update(m_currentRoom->getX()+dx,m_currentRoom->getY()+dy);
+    }
+
 }
-void LevelState::MovePetitPointDown()
+
+void LevelState::Warp(const std::string& p_warp)
 {
-    int ppx = m_PetitPoint.getX();
-    int ppy = m_PetitPoint.getY();
-    int ppw = m_PetitPoint.getWidth();
-    int pph = m_PetitPoint.getHeight();
-
-    int dy = 0;
-
-    bool blocked = false;
-    int toMove = PetitPoint::WALK_SPEED;
-
-    while (toMove > 0 && !blocked)
-    {
-        if (m_currentRoom->isBlocked(ppx, ppy+pph+dy+1) || m_currentRoom->isBlocked(ppx+ppw, ppy+pph+dy+1))
-        {
-            blocked = true;
-        }
-        else
-        {
-            dy++;
-            toMove--;
+    const std::vector<std::string>& maps = m_warps[p_warp];
+    std::string nextMap;
+    std::vector<std::string>::const_iterator it, itend = maps.end();
+    for (it = maps.begin(); it != itend && nextMap.empty(); ++it) {
+        if (*it != m_currentRoom->getName()) {
+            nextMap = *it;
         }
     }
-    m_currentRoom->Update(m_currentRoom->getX(),m_currentRoom->getY()+dy);
+    m_currentRoom = &m_maps[nextMap];
+    m_currentRoom->Update(p_warp);
 }
 
 }

@@ -1,6 +1,6 @@
 #include "GameMachine.h"
 #include "TitleScreenState.h"
-#include "FakeLevelState.h"
+#include "LevelState.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -80,6 +80,8 @@ bool GameMachine::Init()
         success = m_ressourceRepo.Load(m_Window);
     }
 
+    m_keyboardState = SDL_GetKeyboardState(NULL);
+
     return success;
 }
 
@@ -108,7 +110,7 @@ void GameMachine::Loop()
             //Clear screen
             m_Window.Clear();
 
-            GameState* newState = m_currentState->Update(e);
+            GameState* newState = m_currentState->Update(e, m_keyboardState);
             if (newState != m_currentState)
             {
                 quit = !newState->Init(m_Window, m_ressourceRepo);

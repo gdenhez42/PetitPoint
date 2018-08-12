@@ -21,16 +21,18 @@ class LevelState : public GameState
         ~LevelState();
 
         bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
-        GameState* Update(const SDL_Event& e);
+        GameState* Update(const SDL_Event& e, const Uint8*);
         void Render();
 
     private:
-        void MovePetitPointLeft();
-        void MovePetitPointRight();
-        void MovePetitPointUp();
-        void MovePetitPointDown();
+
+        enum Dir { LEFT, RIGHT, UP, DOWN};
+
+        void MovePetitPoint(Dir);
+        void Warp(const std::string&);
 
         std::map<std::string, LMap> m_maps;
+        std::map<std::string, std::vector<std::string> > m_warps;
         LMap* m_currentRoom;
         PetitPoint m_PetitPoint;
 };

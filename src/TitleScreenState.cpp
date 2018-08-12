@@ -27,7 +27,7 @@ bool TitleScreenState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_re
 
     return success;
 }
-GameState* TitleScreenState::Update(const SDL_Event& e)
+GameState* TitleScreenState::Update(const SDL_Event& e, const Uint8* keyboardState)
 {
     if( e.type == SDL_KEYDOWN )
     {

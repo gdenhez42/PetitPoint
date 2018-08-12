@@ -12,7 +12,7 @@ class TitleScreenState : public GameState
         virtual ~TitleScreenState();
 
         bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
-        GameState* Update(const SDL_Event& e);
+        GameState* Update(const SDL_Event& e, const Uint8*);
         void Render();
 
     private:

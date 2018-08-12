@@ -89,6 +89,7 @@ class TileMap
 
         bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename);
         bool FindLayerNode(const std::string&, const LayerNode**, const TilesetNode**) const;
+        bool FindObjectGroup(const std::string&, const ObjectGroup**) const;
 
     private:
         const TilesetNode& FindTileset(int gid) const;
