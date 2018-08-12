@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="14" height="6" tilewidth="64" tileheight="64" infinite="0" nextobjectid="7">
+ <tileset firstgid="1" source="Manoir2.tsx"/>
+ <tileset firstgid="31" source="Flags.tsx"/>
+ <layer name="Background" width="14" height="6">
+  <data encoding="csv">
+2,1,1,1,1,1,1,1,1,1,1,1,1,5,
+3,9,9,9,9,9,9,9,9,9,9,9,9,4,
+3,21,21,21,21,21,21,21,21,21,21,21,21,4,
+3,21,21,21,21,21,21,21,21,21,21,21,21,4,
+3,21,21,21,21,15,21,21,21,21,21,21,21,4,
+6,8,8,8,8,8,8,8,8,8,8,8,8,7
+</data>
+ </layer>
+ <layer name="Walls" width="14" height="6">
+  <data encoding="csv">
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,
+31,0,0,0,0,0,0,0,0,0,0,0,0,31,
+31,0,0,0,0,0,0,0,0,0,0,0,0,31,
+31,0,0,0,0,0,0,0,0,0,0,0,0,31,
+31,31,31,31,31,0,31,31,31,31,31,31,31,31
+</data>
+ </layer>
+ <objectgroup name="Warps">
+  <object id="2" name="warpSASJ2" x="323" y="324" width="59" height="34">
+   <properties>
+    <property name="warp" value="SASJ2"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
