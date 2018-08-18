@@ -158,6 +158,7 @@ bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_f
                     obj.m_y = child->IntAttribute("y");
                     obj.m_w = child->IntAttribute("width");
                     obj.m_h = child->IntAttribute("height");
+                    obj.m_type = child->Attribute("type");
                     tinyxml2::XMLElement* prop = child->FirstChildElement()->FirstChildElement();
                     while (prop != nullptr) {
                         obj.m_properties[prop->Attribute("name")] = prop->Attribute("value");

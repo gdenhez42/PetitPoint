@@ -21,7 +21,7 @@ class LMap
             bool m_blocked;
         };
 
-        struct Warp {
+        struct Zone {
             int m_x;
             int m_y;
             int m_w;
@@ -36,10 +36,10 @@ class LMap
         int getX() const {return m_x;}
         int getY() const {return m_y;}
         const std::string& getName() const {return m_name;}
-        std::vector<std::string> getWarps() const;
         bool isBlocked(int x, int y) const;
         bool isWarp(int x, int y, std::string& p_rWarp) const;
         bool inWarp(int x, int y, int w, int h) const;
+        std::vector<std::string> getLoads() const;
 
         // Rendering loop
         bool Init(const LWindow& p_window,
@@ -61,7 +61,8 @@ class LMap
         int m_heigth;
         int m_tilewidth;
         int m_tileheight;
-        std::map<std::string, Warp> m_warps;
+        std::map<std::string, Zone> m_warps;
+        std::map<std::string, Zone> m_loads;
 
         const LWindow* m_pWindow;
         const LTexture* m_background;

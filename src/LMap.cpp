@@ -7,6 +7,7 @@ namespace {
     const char* WALLS = "Walls";
     const char* WARPS = "Warps";
     const char* WARP = "warp";
+    const char* LOAD = "load";
 }
 
 namespace pp
@@ -86,13 +87,22 @@ bool LMap::Init(const LWindow& p_window,
         // This is a copy because m_properties would need to be non const... wathever
         for (TileMap::Object obj : warps->m_objects)
         {
-            Warp warp;
-            warp.m_name = obj.m_properties[WARP];
+            Zone warp;
+
             warp.m_x = obj.m_x;
             warp.m_y = obj.m_y;
             warp.m_h = obj.m_h;
             warp.m_w = obj.m_w;
-            m_warps[warp.m_name] = warp;
+            if (obj.m_type == LOAD) {
+                warp.m_name = obj.m_properties[LOAD];
+                m_loads[warp.m_name] = warp;
+            } else if (obj.m_type == WARP) {
+                warp.m_name = obj.m_properties[WARP];
+                m_warps[warp.m_name] = warp;
+
+            }
+
+
         }
     }
 
@@ -129,20 +139,20 @@ void LMap::Update (int x, int y)
     m_y = y;
 }
 
-void LMap::Update(const std::string& p_warp)
+void LMap::Update(const std::string& p_load)
 {
-    const Warp& warp = m_warps[p_warp];
-    int middle_x = warp.m_x + warp.m_w/2;
-    int middle_y = warp.m_y + warp.m_h/2;
+    const Zone& load = m_loads[p_load];
+    int middle_x = load.m_x + load.m_w/2;
+    int middle_y = load.m_y + load.m_h/2;
     m_x = middle_x - m_pWindow->getWidth()/2;
     m_y = middle_y - m_pWindow->getHeight()/2;
 }
 
-std::vector<std::string> LMap::getWarps() const
+std::vector<std::string> LMap::getLoads() const
 {
     std::vector<std::string> warps;
-    std::map<std::string, Warp>::const_iterator it, itend = m_warps.end();
-    for(it = m_warps.begin(); it != itend; ++it) {
+    std::map<std::string, Zone>::const_iterator it, itend = m_loads.end();
+    for(it = m_loads.begin(); it != itend; ++it) {
         warps.push_back(it->first);
     }
     return warps;
@@ -169,9 +179,9 @@ bool LMap::isWarp(int x, int y, std::string& p_rWarp) const
     int ePosY = y + m_y;
 
     bool isWarp = false;
-    std::map<std::string, Warp>::const_iterator it, itend = m_warps.end();
+    std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
     for (it = m_warps.begin(); it != itend && !isWarp; ++it) {
-        const Warp& warp = it->second;
+        const Zone& warp = it->second;
         isWarp = (ePosX >= warp.m_x && ePosX < (warp.m_x + warp.m_w)
                   && ePosY >= warp.m_y && ePosY < (warp.m_y + warp.m_h));
         p_rWarp = warp.m_name;
@@ -187,9 +197,9 @@ bool LMap::inWarp(int x, int y, int w, int h) const
     int ePosY = y + m_y;
 
     bool inWarp = false;
-    std::map<std::string, Warp>::const_iterator it, itend = m_warps.end();
+    std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
     for (it = m_warps.begin(); it != itend && !inWarp; ++it) {
-        const Warp& warp = it->second;
+        const Zone& warp = it->second;
         inWarp = ((ePosX+w) >= warp.m_x && ePosX < (warp.m_x + warp.m_w)
                   && (ePosY+h) >= warp.m_y && ePosY < (warp.m_y + warp.m_h));
     }

@@ -68,6 +68,7 @@ class TileMap
             int m_y;
             int m_w;
             int m_h;
+            std::string m_type;
             std::map<std::string,std::string> m_properties;
         };
 

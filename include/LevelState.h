@@ -32,7 +32,7 @@ class LevelState : public GameState
         void Warp(const std::string&);
 
         std::map<std::string, LMap> m_maps;
-        std::map<std::string, std::vector<std::string> > m_warps;
+        std::map<std::string, std::string> m_loads;
         LMap* m_currentRoom;
         PetitPoint m_PetitPoint;
 };

@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="14" height="9" tilewidth="64" tileheight="64" infinite="0" nextobjectid="6">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="14" height="9" tilewidth="64" tileheight="64" infinite="0" nextobjectid="12">
  <tileset firstgid="1" source="Manoir2.tsx"/>
  <tileset firstgid="31" source="Flags.tsx"/>
+ <objectgroup name="Warps">
+  <object id="5" name="warpSASJ" type="warp" x="330.333" y="72.6667" width="45" height="55.6667">
+   <properties>
+    <property name="warp" value="SASJ"/>
+   </properties>
+  </object>
+  <object id="9" name="loadSJSA" type="load" x="326.667" y="126.667" width="46.6667" height="16">
+   <properties>
+    <property name="load" value="SJSA"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="Background" width="14" height="9">
   <data encoding="csv">
 2,1,1,1,1,1,1,1,1,1,1,1,1,5,
@@ -15,13 +27,6 @@
 6,8,8,8,8,8,8,8,8,8,8,8,8,7
 </data>
  </layer>
- <objectgroup name="Warps">
-  <object id="5" name="warpSASJ2" x="325" y="72.6667" width="53" height="55.6667">
-   <properties>
-    <property name="warp" value="SASJ2"/>
-   </properties>
-  </object>
- </objectgroup>
  <layer name="Walls" width="14" height="9">
   <data encoding="csv">
 31,31,31,31,31,31,31,31,31,31,31,31,31,31,

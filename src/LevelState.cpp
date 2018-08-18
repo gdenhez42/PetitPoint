@@ -35,10 +35,10 @@ bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourc
 
         std::map<std::string, LMap>::const_iterator it, itend = m_maps.end();
         for(it = m_maps.begin(); it != itend; ++it) {
-            const std::vector<std::string>& warps = it->second.getWarps();
+            const std::vector<std::string>& warps = it->second.getLoads();
             std::vector<std::string>::const_iterator it2, it2end = warps.end();
             for (it2 = warps.begin(); it2 != it2end; ++it2) {
-                m_warps[*it2].push_back(it->first);
+                m_loads[*it2] = it->first;
             }
         }
     }
@@ -164,14 +164,7 @@ void LevelState::MovePetitPoint(Dir d)
 
 void LevelState::Warp(const std::string& p_warp)
 {
-    const std::vector<std::string>& maps = m_warps[p_warp];
-    std::string nextMap;
-    std::vector<std::string>::const_iterator it, itend = maps.end();
-    for (it = maps.begin(); it != itend && nextMap.empty(); ++it) {
-        if (*it != m_currentRoom->getName()) {
-            nextMap = *it;
-        }
-    }
+    const std::string& nextMap = m_loads[p_warp];
     m_currentRoom = &m_maps[nextMap];
     m_currentRoom->Update(p_warp);
 }
