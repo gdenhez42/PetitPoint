@@ -20,7 +20,7 @@ class LTexture
         bool loadFromRenderedText(const LWindow& window, const LFont& p_pFont, std::string textureText, SDL_Color textColor);
 
         //Renders texture at given point
-        void render(int x, int y, SDL_Rect* clip = NULL) const;
+        void render(int x, int y, const SDL_Rect* clip = NULL) const;
         //Gets image dimensions
         int getWidth() const;
         int getHeight() const;

@@ -3,9 +3,10 @@
 
 #include "PetitPoint.h"
 #include "Tiled.h"
+#include "Enemy.h"
 #include "GameState.h"
 #include <SDL2/SDL.h>
-#include <memory>
+#include <vector>
 
 class LWindow;
 class RessourcesRepo;
@@ -13,6 +14,7 @@ class RessourcesRepo;
 namespace pp {
 
 class LMap;
+class Enemy;
 
 class LevelState : public GameState
 {
@@ -28,13 +30,17 @@ class LevelState : public GameState
 
         enum Dir { LEFT, RIGHT, UP, DOWN};
 
+        bool initEnemies(const RessourcesRepo&);
         void MovePetitPoint(Dir);
         void Warp(const std::string&);
 
         std::map<std::string, LMap> m_maps;
         std::map<std::string, std::string> m_loads;
+        std::vector<Enemy> m_enemies;
         LMap* m_currentRoom;
         PetitPoint m_PetitPoint;
+
+        const LWindow* m_pWindow;
 };
 
 }

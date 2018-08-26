@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="petitpoint" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/petitpoint" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/petitpoint" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="external" />
+		</Compiler>
+		<Linker>
+			<Add option="-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer" />
+			<Add library="external/libtinyxml2.a" />
+		</Linker>
+		<Unit filename="include/Enemy.h" />
+		<Unit filename="include/GameMachine.h" />
+		<Unit filename="include/GameState.h" />
+		<Unit filename="include/LAnimation.h" />
+		<Unit filename="include/LFont.h" />
+		<Unit filename="include/LMap.h" />
+		<Unit filename="include/LTexture.h" />
+		<Unit filename="include/LWindow.h" />
+		<Unit filename="include/LevelState.h" />
+		<Unit filename="include/Manoir.h" />
+		<Unit filename="include/Personage.h" />
+		<Unit filename="include/PetitPoint.h" />
+		<Unit filename="include/RessourcesRepo.h" />
+		<Unit filename="include/Tiled.h" />
+		<Unit filename="include/TitleScreenState.h" />
+		<Unit filename="include/command.h" />
+		<Unit filename="src/Enemy.cpp" />
+		<Unit filename="src/GameMachine.cpp" />
+		<Unit filename="src/GameState.cpp" />
+		<Unit filename="src/LAnimation.cpp" />
+		<Unit filename="src/LFont.cpp" />
+		<Unit filename="src/LMap.cpp" />
+		<Unit filename="src/LTexture.cpp" />
+		<Unit filename="src/LWindow.cpp" />
+		<Unit filename="src/LevelState.cpp" />
+		<Unit filename="src/Manoir.cpp" />
+		<Unit filename="src/Personage.cpp" />
+		<Unit filename="src/PetitPoint.cpp" />
+		<Unit filename="src/RessourcesRepo.cpp" />
+		<Unit filename="src/Tiled.cpp" />
+		<Unit filename="src/TitleScreenState.cpp" />
+		<Unit filename="src/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

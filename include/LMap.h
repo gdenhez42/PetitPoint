@@ -40,11 +40,11 @@ class LMap
         bool isWarp(int x, int y, std::string& p_rWarp) const;
         bool inWarp(int x, int y, int w, int h) const;
         std::vector<std::string> getLoads() const;
+        const Zone& getLoad(const std::string& p_load) const { return m_loads.at(p_load); }
 
         // Rendering loop
         bool Init(const LWindow& p_window,
-                  const RessourcesRepo& p_ressourceRepo,
-                  const std::string& p_mapName,
+                  const TileMap& tilemap,
                   const std::string& p_name);
         void Render() const;
         void Update(int x, int y);
@@ -67,6 +67,8 @@ class LMap
         const LWindow* m_pWindow;
         const LTexture* m_background;
         Tile** m_tiles;
+
+        // Position de la map, relatif au coin superieur gauche de l'ecran
         int m_x;
         int m_y;
 };

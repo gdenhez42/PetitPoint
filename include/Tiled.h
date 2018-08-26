@@ -7,10 +7,12 @@ Utility classes to read tiled map (see https://www.mapeditor.org/)
 #define TILESET_H
 
 #include "LTexture.h"
+#include "LAnimation.h"
 #include <string>
 #include <vector>
 #include <map>
 #include <SDL2/SDL.h>
+
 
 
 class RessourcesRepo;
@@ -27,6 +29,7 @@ class TileSet
         virtual ~TileSet();
 
         bool Init(const LWindow& window, const std::string& p_filename);
+        const LAnimation& getAnimation(int id) const;
 
     private:
         std::string m_name;
@@ -35,6 +38,7 @@ class TileSet
         int m_count;
         int m_columns;
         LTexture m_image;
+        std::map<int, LAnimation> m_animations;
 
         friend class TileMap;
 };
@@ -89,6 +93,7 @@ class TileMap
         int GetTileheight() const { return m_tileheight; }
 
         bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename);
+        bool FindLayerNode(const std::string& p_name, const LayerNode** p_ppLayer) const;
         bool FindLayerNode(const std::string&, const LayerNode**, const TilesetNode**) const;
         bool FindObjectGroup(const std::string&, const ObjectGroup**) const;
 

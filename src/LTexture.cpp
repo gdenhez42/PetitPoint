@@ -102,7 +102,7 @@ void LTexture::free()
 	}
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip) const
+void LTexture::render(int x, int y, const SDL_Rect* clip) const
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };

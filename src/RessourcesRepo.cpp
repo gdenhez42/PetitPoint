@@ -27,12 +27,6 @@ bool RessourcesRepo::Load(const LWindow& window)
 {
     bool success = true;
 
-    // PetitPoint
-    if (success)
-    {
-        success = m_petitPoint.loadFromFile(window, "Images/PetitPoint.png");
-    }
-
     // Title screen
     if (success)
     {
@@ -44,19 +38,20 @@ bool RessourcesRepo::Load(const LWindow& window)
         success = m_titleText.loadFromRenderedText( window, m_titleFont, "TBR", textColor );
     }
 
-    // Manoir rooms
+    // Tilesets to load
     if (success)
     {
         success = m_tileSets["Manoir2.tsx"].Init(window, "Maps/Manoir2.tsx");
+        success &= m_tileSets["pika.tsx"].Init(window, "Maps/pika.tsx");
+        success &= m_tileSets["Flags.tsx"].Init(window, "Maps/Flags.tsx");
+        success &= m_tileSets["PetitPoint.tsx"].Init(window, "Maps/PetitPoint.tsx");
     }
-    if (success)
-    {
-        success = m_tileSets["Flags.tsx"].Init(window, "Maps/Flags.tsx");
-    }
+
+    // Manoir rooms
     if (success)
     {
         success = m_maps["Manoir2_SJ.tmx"].Init(*this, "Maps/Manoir2_SJ.tmx");
-        success = m_maps["Manoir2_SA.tmx"].Init(*this, "Maps/Manoir2_SA.tmx");
+        success &= m_maps["Manoir2_SA.tmx"].Init(*this, "Maps/Manoir2_SA.tmx");
     }
 
     return success;

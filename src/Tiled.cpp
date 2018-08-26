@@ -5,6 +5,10 @@
 namespace {
 
     const char* NUMBERS = "0123456789";
+    const char* ANIMATION = "animation";
+    const char* TILEID = "tileid";
+    const std::string TILE = "tile";
+
 }
 
 
@@ -28,10 +32,12 @@ TileSet::~TileSet()
 
 bool TileSet::Init(const LWindow& window, const std::string& p_filename)
 {
+    bool success = true;
 
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError err = doc.LoadFile(p_filename.c_str());
-    if (err == tinyxml2::XML_SUCCESS)
+    success = (err == tinyxml2::XML_SUCCESS);
+    if (success)
     {
         tinyxml2::XMLElement* root = doc.RootElement();
 
@@ -44,10 +50,41 @@ bool TileSet::Init(const LWindow& window, const std::string& p_filename)
         tinyxml2::XMLElement* image = root->FirstChildElement("image");
 
         std::string imagePath = image->Attribute("source");
-        return m_image.loadFromFile(window, std::string("Maps/")+imagePath);
+        success = m_image.loadFromFile(window, std::string("Maps/")+imagePath);
     }
 
-    return false;
+    if (success) {
+        tinyxml2::XMLElement* root = doc.RootElement();
+        tinyxml2::XMLElement* elem = root->FirstChildElement();
+        while(elem != nullptr) {
+            if (TILE == elem->Name()) {
+                int id = elem->IntAttribute("id");
+                tinyxml2::XMLElement* anim = elem->FirstChildElement(ANIMATION);
+                if (anim != nullptr) {
+                    LAnimation animation;
+                    tinyxml2::XMLElement* frame = anim->FirstChildElement();
+                    while (frame != nullptr) {
+                        int tileid = frame->IntAttribute(TILEID);
+                        animation.AddFrame(LAnimation::Frame(&m_image,
+                            {(tileid%m_columns)*m_width, (tileid/m_columns)*m_height, m_width, m_height}));
+                        frame = frame->NextSiblingElement();
+                    }
+
+                    m_animations[id] = animation;
+                }
+            }
+
+            elem = elem->NextSiblingElement();
+        }
+
+    }
+
+    return success;
+}
+
+const LAnimation& TileSet::getAnimation(int id) const
+{
+    return m_animations.at(id);
 }
 
 /*************************************************************************************
@@ -99,20 +136,6 @@ TileMap& TileMap::operator=(TileMap p_tileMap)
     std::swap(m_tileheight, p_tileMap.m_tileheight);
 
     return *this;
-}
-
-const TileMap::TilesetNode& TileMap::FindTileset(int gid) const
-{
-    std::vector<TilesetNode>::const_iterator t = m_tilesets.begin();
-    std::vector<TilesetNode>::const_iterator it = m_tilesets.begin();
-    std::vector<TilesetNode>::const_iterator end = m_tilesets.end();
-    for (; it != end; ++it)
-    {
-        if (it->m_firstGid <= gid && it->m_firstGid > t->m_firstGid) {
-            t = it;
-        }
-    }
-    return *t;
 }
 
 bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename)
@@ -178,6 +201,34 @@ bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_f
     }
 
     return success;
+}
+
+const TileMap::TilesetNode& TileMap::FindTileset(int gid) const
+{
+    std::vector<TilesetNode>::const_iterator t = m_tilesets.begin();
+    std::vector<TilesetNode>::const_iterator it = m_tilesets.begin();
+    std::vector<TilesetNode>::const_iterator end = m_tilesets.end();
+    for (; it != end; ++it)
+    {
+        if (it->m_firstGid <= gid && it->m_firstGid > t->m_firstGid) {
+            t = it;
+        }
+    }
+    return *t;
+}
+
+bool TileMap::FindLayerNode(const std::string& p_name,
+                            const LayerNode** p_ppLayer) const
+{
+    bool found = false;
+    std::vector<LayerNode>::const_iterator it, itend = m_layers.end();
+    for (it = m_layers.begin(); it != itend && !found; ++it) {
+        if (it->m_name == p_name) {
+            (*p_ppLayer) = &(*it);
+            found = true;
+        }
+    }
+    return found;
 }
 
 bool TileMap::FindLayerNode(const std::string& p_name,

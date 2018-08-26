@@ -32,15 +32,12 @@ LMap::~LMap()
 }
 
 bool LMap::Init(const LWindow& p_window,
-                const RessourcesRepo& p_ressourceRepo,
-                const std::string& p_filename,
+                const TileMap& tilemap,
                 const std::string& p_name)
 {
     bool success = true;
 
     m_pWindow = &p_window;
-
-    const TileMap& tilemap = p_ressourceRepo.getMap(p_filename);
 
     m_name = p_name;
     m_heigth = tilemap.GetHeigth();
@@ -84,7 +81,7 @@ bool LMap::Init(const LWindow& p_window,
             }
         }
 
-        // This is a copy because m_properties would need to be non const... wathever
+        // This is a copy because m_properties would need to be non const... whatever
         for (TileMap::Object obj : warps->m_objects)
         {
             Zone warp;
@@ -113,21 +110,21 @@ void LMap::Render() const {
     int x = m_x;
     int y = m_y;
 
-    int wh = m_pWindow->getHeight();
-    int ww = m_pWindow->getWidth();
+    int nb_h = m_pWindow->getHeight() / m_tileheight + 1;
+    int nb_w = m_pWindow->getWidth() / m_tilewidth + 1;
 
-    int leftmost = x > 0 ? x/m_tilewidth : 0;
-    int rightmost = (x + ww)/m_tilewidth + 1 < m_width ? (x + ww)/m_tilewidth + 1 : m_width;
+    int leftmost = x > 0 ? 0 : -x/m_tilewidth;
+    int rightmost = leftmost + nb_w < m_width ? leftmost + nb_w : m_width;
 
-    int upmost = y > 0 ? y/m_tileheight : 0;
-    int downmost = (y + wh)/m_tileheight + 1 < m_heigth ? (y + wh)/m_tileheight + 1 : m_heigth;
+    int upmost = y > 0 ? 0 : -y/m_tileheight;
+    int downmost = upmost + nb_h < m_heigth ? upmost + nb_h : m_heigth;
 
     for (int i = upmost; i < downmost; i++)
     {
         for (int j = leftmost; j < rightmost; j++)
         {
-            int tilePosX = j*m_tilewidth - x;
-            int tilePosY = i*m_tileheight - y;
+            int tilePosX = j*m_tilewidth + x;
+            int tilePosY = i*m_tileheight + y;
             m_background->render(tilePosX, tilePosY, &m_tiles[i][j].m_rect);
         }
     }
@@ -144,8 +141,8 @@ void LMap::Update(const std::string& p_load)
     const Zone& load = m_loads[p_load];
     int middle_x = load.m_x + load.m_w/2;
     int middle_y = load.m_y + load.m_h/2;
-    m_x = middle_x - m_pWindow->getWidth()/2;
-    m_y = middle_y - m_pWindow->getHeight()/2;
+    m_x = m_pWindow->getWidth()/2 - middle_x;
+    m_y = m_pWindow->getHeight()/2 - middle_y;
 }
 
 std::vector<std::string> LMap::getLoads() const
@@ -160,13 +157,9 @@ std::vector<std::string> LMap::getLoads() const
 
 bool LMap::isBlocked(int x, int y) const
 {
-    // Effective position in the room
-    int ePosX = x + m_x;
-    int ePosY = y + m_y;
-
     // Index of tile
-    int ix = ePosX/m_tilewidth;
-    int iy = ePosY/m_tileheight;
+    int ix = x/m_tilewidth;
+    int iy = y/m_tileheight;
 
     return !(ix >= 0 && ix < m_width && iy >= 0 && iy < m_heigth) ||
            m_tiles[iy][ix].m_blocked;
@@ -174,16 +167,12 @@ bool LMap::isBlocked(int x, int y) const
 
 bool LMap::isWarp(int x, int y, std::string& p_rWarp) const
 {
-    // Effective position in the room
-    int ePosX = x + m_x;
-    int ePosY = y + m_y;
-
     bool isWarp = false;
     std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
     for (it = m_warps.begin(); it != itend && !isWarp; ++it) {
         const Zone& warp = it->second;
-        isWarp = (ePosX >= warp.m_x && ePosX < (warp.m_x + warp.m_w)
-                  && ePosY >= warp.m_y && ePosY < (warp.m_y + warp.m_h));
+        isWarp = (x >= warp.m_x && x < (warp.m_x + warp.m_w)
+                  && y >= warp.m_y && y < (warp.m_y + warp.m_h));
         p_rWarp = warp.m_name;
     }
 
@@ -192,16 +181,12 @@ bool LMap::isWarp(int x, int y, std::string& p_rWarp) const
 
 bool LMap::inWarp(int x, int y, int w, int h) const
 {
-    // Effective position in the room
-    int ePosX = x + m_x;
-    int ePosY = y + m_y;
-
     bool inWarp = false;
     std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
     for (it = m_warps.begin(); it != itend && !inWarp; ++it) {
         const Zone& warp = it->second;
-        inWarp = ((ePosX+w) >= warp.m_x && ePosX < (warp.m_x + warp.m_w)
-                  && (ePosY+h) >= warp.m_y && ePosY < (warp.m_y + warp.m_h));
+        inWarp = ((x+w) >= warp.m_x && x < (warp.m_x + warp.m_w)
+                  && (y+h) >= warp.m_y && y < (warp.m_y + warp.m_h));
     }
 
     return inWarp;
