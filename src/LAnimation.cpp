@@ -14,7 +14,7 @@ void LAnimation::AddFrame(const Frame& frame) {
     m_totalFrames += 4;
 }
 
-void LAnimation::Render(int x, int y) const
+void LAnimation::Render(int x, int y)
 {
     const Frame& frame = m_frames[m_currentFrame/4];
     frame.m_texture->render(x, y, &frame.m_rect);

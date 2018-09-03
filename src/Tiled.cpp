@@ -138,14 +138,17 @@ TileMap& TileMap::operator=(TileMap p_tileMap)
     return *this;
 }
 
-bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename)
+bool TileMap::Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_name)
 {
     bool success = true;
 
     tinyxml2::XMLDocument doc;
-    tinyxml2::XMLError err = doc.LoadFile(p_filename.c_str());
+    tinyxml2::XMLError err = doc.LoadFile(p_name.c_str());
     if (err == tinyxml2::XML_SUCCESS)
     {
+        // filename and name are the same for simplicity
+        m_name = p_name;
+
         // Read xml
         tinyxml2::XMLElement* root = doc.RootElement();
         tinyxml2::XMLElement* elem = root->FirstChildElement();

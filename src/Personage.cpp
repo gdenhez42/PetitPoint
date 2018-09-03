@@ -5,8 +5,9 @@
 
 namespace pp {
 
-Personage::Personage(const HitBox& hitbox, int x, int y)
-: m_x(x),
+Personage::Personage(const HitBox& hitbox, int x, int y, const std::string& room)
+: m_room(room),
+  m_x(x),
   m_y(y),
   m_groundHb(hitbox),
   m_tileset(nullptr),

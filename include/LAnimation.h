@@ -17,12 +17,12 @@ class LAnimation
 
         LAnimation();
         void AddFrame(const Frame&);
-        void Render(int x, int y) const;
-        void Reset() const { m_currentFrame = 0; }
+        void Render(int x, int y);
+        void Reset() { m_currentFrame = 0; }
 
     private:
         std::vector<Frame> m_frames;
-        mutable int m_currentFrame;
+        int m_currentFrame;
         int m_totalFrames;
 };
 

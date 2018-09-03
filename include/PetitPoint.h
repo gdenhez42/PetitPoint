@@ -25,14 +25,14 @@ class PetitPoint : public pp::Personage
     private:
 
         int m_direction;
-        const LAnimation* m_frontIdle;
-        const LAnimation* m_frontWalk;
-        const LAnimation* m_backIdle;
-        const LAnimation* m_backWalk;
-        const LAnimation* m_leftIdle;
-        const LAnimation* m_leftWalk;
-        const LAnimation* m_rightIdle;
-        const LAnimation* m_rightWalk;
+        LAnimation m_frontIdle;
+        LAnimation m_frontWalk;
+        LAnimation m_backIdle;
+        LAnimation m_backWalk;
+        LAnimation m_leftIdle;
+        LAnimation m_leftWalk;
+        LAnimation m_rightIdle;
+        LAnimation m_rightWalk;
 
 };
 

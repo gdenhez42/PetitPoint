@@ -44,8 +44,7 @@ class LMap
 
         // Rendering loop
         bool Init(const LWindow& p_window,
-                  const TileMap& tilemap,
-                  const std::string& p_name);
+                  const TileMap& tilemap);
         void Render() const;
         void Update(int x, int y);
         void Update(const std::string&);

@@ -10,8 +10,7 @@ namespace {
 namespace pp {
 
 Enemy::Enemy(int x, int y, const std::string& room)
-: Personage(HitBox(0,0,64,64), -1,-1),
-  m_room(room)
+: Personage(HitBox(0,0,64,64), x,y, room)
 {
     //ctor
 }
@@ -25,9 +24,9 @@ void Enemy::Init(const RessourcesRepo& resources)
 {
     // Init the animations
     m_tileset = &resources.getTileSet(PIKA_TS);
-    m_frontIdle = &m_tileset->getAnimation(0);
+    m_frontIdle = m_tileset->getAnimation(0);
 
-    m_currentAnimation = m_frontIdle;
+    m_currentAnimation = &m_frontIdle;
 
 }
 

@@ -32,14 +32,13 @@ LMap::~LMap()
 }
 
 bool LMap::Init(const LWindow& p_window,
-                const TileMap& tilemap,
-                const std::string& p_name)
+                const TileMap& tilemap)
 {
     bool success = true;
 
     m_pWindow = &p_window;
 
-    m_name = p_name;
+    m_name = tilemap.GetName();
     m_heigth = tilemap.GetHeigth();
     m_width = tilemap.GetWidth();
     m_tileheight = tilemap.GetTileheight();

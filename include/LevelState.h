@@ -30,7 +30,7 @@ class LevelState : public GameState
 
         enum Dir { LEFT, RIGHT, UP, DOWN};
 
-        bool initEnemies(const RessourcesRepo&);
+        bool initCharacters(const RessourcesRepo&);
         void MovePetitPoint(Dir);
         void Warp(const std::string&);
 

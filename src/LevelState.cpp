@@ -1,7 +1,10 @@
 #include "LevelState.h"
 #include "LMap.h"
 
-
+namespace {
+    const std::string PERSONNAGE = "Personnages";
+    const std::string PETITPOINT = "PetitPoint";
+}
 namespace pp {
 
 LevelState::LevelState()
@@ -25,18 +28,20 @@ bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourc
     const TileMap& manoir2SJ = p_ressourceRepo.getMap("Manoir2_SJ.tmx");
     const TileMap& manoir2SA = p_ressourceRepo.getMap("Manoir2_SA.tmx");
 
-    success = m_maps["Manoir2_SJ"].Init(p_pWindow, manoir2SJ, "Manoir2_SJ");
-    success &= m_maps["Manoir2_SA"].Init(p_pWindow, manoir2SA, "Manoir2_SA");
+    success = m_maps[manoir2SJ.GetName()].Init(p_pWindow, manoir2SJ);
+    success &= m_maps[manoir2SA.GetName()].Init(p_pWindow, manoir2SA);
 
-    if (success)
-    {
-        m_currentRoom = &m_maps["Manoir2_SJ"];
+    if (success) {
+        success = initCharacters(p_ressourceRepo);
+    }
+    if (success) {
+        m_currentRoom = &m_maps[m_PetitPoint.getRoom()];
 
-        m_currentRoom->Update(0,0);
-        m_PetitPoint.Init(p_ressourceRepo);
-        m_PetitPoint.Warp(m_currentRoom->getName(), p_pWindow.getWidth()/2 - PetitPoint::IMAGE_SIZE/2,
-                          p_pWindow.getHeight()/2 - PetitPoint::IMAGE_SIZE/2);
+        // Make sure petitpoint is in the middle of the screen
+        m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - PetitPoint::IMAGE_SIZE/2,
+                              m_pWindow->getHeight()/2 - m_PetitPoint.getY() - PetitPoint::IMAGE_SIZE/2);
 
+        // Get warp list to move from one room to another
         std::map<std::string, LMap>::const_iterator it, itend = m_maps.end();
         for(it = m_maps.begin(); it != itend; ++it) {
             const std::vector<std::string>& warps = it->second.getLoads();
@@ -78,6 +83,9 @@ GameState* LevelState::Update(const SDL_Event& e, const Uint8* keyboardState)
 void LevelState::Render()
 {
     m_currentRoom->Render();
+    for(Enemy& enemy : m_enemies) {
+        enemy.Render(*m_currentRoom);
+    }
     m_PetitPoint.Render(*m_currentRoom);
 }
 
@@ -173,14 +181,60 @@ void LevelState::Warp(const std::string& p_warp)
     int middle_x = zone.m_x + zone.m_w/2;
     int middle_y = zone.m_y + zone.m_h/2;
 
-    m_currentRoom->Update(m_pWindow->getWidth()/2 - PetitPoint::IMAGE_SIZE/2 - middle_x,
-    m_pWindow->getHeight()/2 - PetitPoint::IMAGE_SIZE/2 - middle_y);
+    m_currentRoom->Update(m_pWindow->getWidth()/2 - middle_x,
+                          m_pWindow->getHeight()/2 - middle_y);
     m_PetitPoint.Warp(m_currentRoom->getName(),
-                      zone.m_x + zone.m_w / 2 - PetitPoint::IMAGE_SIZE/2,
-                      zone.m_y + zone.m_h / 2 - PetitPoint::IMAGE_SIZE/2);
+                      middle_x - PetitPoint::IMAGE_SIZE/2,
+                      middle_y - PetitPoint::IMAGE_SIZE/2);
 
 }
 
-bool initEnemies(const RessourcesRepo&);
+/**********************************************************************
+Init characters in the level
+***********************************************************************/
+bool LevelState::initCharacters(const RessourcesRepo& p_ressourceRepo) {
+
+    bool foundPetitPoint = false;
+
+    // Find the positions of the characters
+    const TileMap* rooms [] = {&p_ressourceRepo.getMap("Manoir2_SJ.tmx"),
+                               &p_ressourceRepo.getMap("Manoir2_SA.tmx")};
+    const size_t nbRooms = sizeof(rooms) / sizeof(TileMap*);
+    for (size_t r = 0; r < nbRooms; r++) {
+        const TileMap* room = rooms[r];
+
+        const TileMap::LayerNode* pNode = nullptr;
+        bool havePerso = room->FindLayerNode(PERSONNAGE, &pNode);
+        if (havePerso) {
+            int** tiles = pNode->m_tiles;
+            for (int i = 0; i < pNode->m_heigth; i++) {
+                for (int j = 0; j < pNode->m_width; j++) {
+                    int val = tiles[i][j];
+                    if (val > 0) {
+                        const TileMap::TilesetNode& ts = room->FindTileset(val);
+                        if (ts.m_tileSet.getName() == PETITPOINT) {
+                            foundPetitPoint = true;
+                            m_PetitPoint.Warp(room->GetName(), j*room->GetTilewidth(), i*room->GetTileheight());
+                        }
+                        else
+                        {
+                            m_enemies.push_back(Enemy(j*room->GetTilewidth(), i*room->GetTileheight(), room->GetName()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Call init for every characters found
+    if (foundPetitPoint) {
+        m_PetitPoint.Init(p_ressourceRepo);
+        for (Enemy& enemy : m_enemies) {
+            enemy.Init(p_ressourceRepo);
+        }
+    }
+
+    return foundPetitPoint;
+}
 
 }

@@ -17,7 +17,7 @@ const int PetitPoint::WALK_SPEED = 2;
 const int PetitPoint::IMAGE_SIZE = 64;
 
 PetitPoint::PetitPoint()
-: Personage(HitBox(12,40,40,22), 0, 0),
+: Personage(HitBox(12,40,40,22), 0, 0, ""),
   m_direction(DOWN),
   m_frontIdle(),
   m_frontWalk(),
@@ -39,15 +39,15 @@ void PetitPoint::Init(const RessourcesRepo& resources)
 {
     // Init the animations
     m_tileset = &resources.getTileSet(PETITPOINT_TS);
-    m_frontIdle = &(m_tileset->getAnimation(0));
-    m_frontWalk = &m_tileset->getAnimation(1);
-    m_backIdle = &m_tileset->getAnimation(3);
-    m_backWalk = &m_tileset->getAnimation(4);
-    m_rightIdle = &m_tileset->getAnimation(6);
-    m_rightWalk = &m_tileset->getAnimation(7);
-    m_leftIdle = &m_tileset->getAnimation(9);
-    m_leftWalk = &m_tileset->getAnimation(10);
-    m_currentAnimation = m_frontIdle;
+    m_frontIdle = m_tileset->getAnimation(0);
+    m_frontWalk = m_tileset->getAnimation(1);
+    m_backIdle = m_tileset->getAnimation(3);
+    m_backWalk = m_tileset->getAnimation(4);
+    m_rightIdle = m_tileset->getAnimation(6);
+    m_rightWalk = m_tileset->getAnimation(7);
+    m_leftIdle = m_tileset->getAnimation(9);
+    m_leftWalk = m_tileset->getAnimation(10);
+    m_currentAnimation = &m_frontIdle;
 
 }
 void PetitPoint::Update(Command::Command command)
@@ -57,44 +57,44 @@ void PetitPoint::Update(Command::Command command)
         case Command::NONE:
             switch(m_direction) {
                 case LEFT:
-                m_currentAnimation = m_leftIdle;
+                m_currentAnimation = &m_leftIdle;
                 break;
                 case RIGHT:
-                m_currentAnimation = m_rightIdle;
+                m_currentAnimation = &m_rightIdle;
                 break;
                 case UP:
-                m_currentAnimation = m_backIdle;
+                m_currentAnimation = &m_backIdle;
                 break;
                 case DOWN:
-                m_currentAnimation = m_frontIdle;
+                m_currentAnimation = &m_frontIdle;
                 break;
             }
             break;
         case Command::MOVE_LEFT:
             m_direction = LEFT;
-            if (m_currentAnimation != m_leftWalk) {
-                m_currentAnimation = m_leftWalk;
+            if (m_currentAnimation != &m_leftWalk) {
+                m_currentAnimation = &m_leftWalk;
                 m_currentAnimation->Reset();
             }
             break;
         case Command::MOVE_RIGHT:
             m_direction = RIGHT;
-            if (m_currentAnimation != m_rightWalk) {
-                m_currentAnimation = m_rightWalk;
+            if (m_currentAnimation != &m_rightWalk) {
+                m_currentAnimation = &m_rightWalk;
                 m_currentAnimation->Reset();
             }
             break;
         case Command::MOVE_UP:
             m_direction = UP;
-            if (m_currentAnimation != m_backWalk) {
-                m_currentAnimation = m_backWalk;
+            if (m_currentAnimation != &m_backWalk) {
+                m_currentAnimation = &m_backWalk;
                 m_currentAnimation->Reset();
             }
             break;
         case Command::MOVE_DOWN:
             m_direction = DOWN;
-            if (m_currentAnimation != m_frontWalk) {
-                m_currentAnimation = m_frontWalk;
+            if (m_currentAnimation != &m_frontWalk) {
+                m_currentAnimation = &m_frontWalk;
                 m_currentAnimation->Reset();
             }
             break;

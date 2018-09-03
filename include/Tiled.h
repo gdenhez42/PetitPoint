@@ -30,6 +30,7 @@ class TileSet
 
         bool Init(const LWindow& window, const std::string& p_filename);
         const LAnimation& getAnimation(int id) const;
+        const std::string& getName() const { return m_name; }
 
     private:
         std::string m_name;
@@ -91,14 +92,15 @@ class TileMap
         int GetHeigth() const { return m_heigth; }
         int GetTilewidth() const { return m_tilewidth; }
         int GetTileheight() const { return m_tileheight; }
+        const std::string& GetName() const { return m_name; }
 
-        bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename);
+        bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_name);
         bool FindLayerNode(const std::string& p_name, const LayerNode** p_ppLayer) const;
         bool FindLayerNode(const std::string&, const LayerNode**, const TilesetNode**) const;
         bool FindObjectGroup(const std::string&, const ObjectGroup**) const;
+        const TilesetNode& FindTileset(int gid) const;
 
     private:
-        const TilesetNode& FindTileset(int gid) const;
 
         std::vector<TilesetNode> m_tilesets;
         std::vector<LayerNode> m_layers;
@@ -108,6 +110,7 @@ class TileMap
         int m_heigth;
         int m_tilewidth;
         int m_tileheight;
+        std::string m_name;
 };
 
 }

@@ -23,11 +23,12 @@ class Personage
             HitBox(int x, int y, int w, int h) : m_x(x), m_y(y), m_w(w), m_h(h) {}
         };
 
-        Personage(const HitBox&, int, int);
+        Personage(const HitBox&, int, int, const std::string&);
         virtual ~Personage();
 
         int getX() {return m_x;}
         int getY() {return m_y;}
+        const std::string& getRoom() {return m_room;}
         const HitBox& getGroundHb() {return m_groundHb;}
 
         void Render(const LMap& currentRoom);
@@ -47,7 +48,7 @@ class Personage
 
         // L'animation a afficher pour ce personnage
         const TileSet* m_tileset;
-        const LAnimation* m_currentAnimation;
+        LAnimation* m_currentAnimation;
 
 };
 
