@@ -74,6 +74,7 @@ const LTexture& RessourcesRepo::getImage(const std::string& p_texture) const
 const pp::TileMap& RessourcesRepo::getMap(const std::string& p_name) const
 {
     std::map<std::string, pp::TileMap>::const_iterator it = m_maps.find(p_name);
+    assert(it != m_maps.end());
     return it->second;
 }
 
@@ -86,8 +87,10 @@ const pp::TileSet& RessourcesRepo::getTileSet(const std::string& p_name) const
 
 std::string RessourcesRepo::getRessourceName(const std::string& p_resourcePath)
 {
+
   size_t lastSlash = p_resourcePath.find_last_of('/');
   size_t lastDot = p_resourcePath.find_last_of('.');
   size_t len = lastDot - lastSlash - 1;
   return p_resourcePath.substr(lastSlash + 1, len);
 }
+

@@ -7,7 +7,7 @@ namespace {
     enum Directions {
         DOWN,UP,LEFT,RIGHT
     };
-    const std::string PETITPOINT_TS = "PetitPoint.tsx";
+    const std::string PETITPOINT_TS = "Lore";
 
 }
 
@@ -40,13 +40,13 @@ void PetitPoint::Init(const RessourcesRepo& resources)
     // Init the animations
     m_tileset = &resources.getTileSet(PETITPOINT_TS);
     m_frontIdle = m_tileset->getAnimation(0);
-    m_frontWalk = m_tileset->getAnimation(1);
-    m_backIdle = m_tileset->getAnimation(3);
-    m_backWalk = m_tileset->getAnimation(4);
-    m_rightIdle = m_tileset->getAnimation(6);
-    m_rightWalk = m_tileset->getAnimation(7);
-    m_leftIdle = m_tileset->getAnimation(9);
-    m_leftWalk = m_tileset->getAnimation(10);
+    m_frontWalk = m_tileset->getAnimation(2);
+    m_backIdle = m_tileset->getAnimation(4);
+    m_backWalk = m_tileset->getAnimation(6);
+    m_rightIdle = m_tileset->getAnimation(8);
+    m_rightWalk = m_tileset->getAnimation(10);
+    m_leftIdle = m_tileset->getAnimation(12);
+    m_leftWalk = m_tileset->getAnimation(14);
     m_currentAnimation = &m_frontIdle;
 
 }
@@ -101,5 +101,5 @@ void PetitPoint::Update(Command::Command command)
     }
 }
 
-
 }
+

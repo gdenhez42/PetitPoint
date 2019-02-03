@@ -3,7 +3,7 @@
 
 namespace {
     const std::string PERSONNAGE = "Personnages";
-    const std::string PETITPOINT = "PetitPoint";
+    const std::string PETITPOINT = "Lore";
 }
 namespace pp {
 
@@ -26,8 +26,12 @@ bool LevelState::Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourc
 
     // Get the maps of this level
     const TileMap& manoirWC = p_ressourceRepo.getMap("manoir_WC");
+    const TileMap& manoir_bibli = p_ressourceRepo.getMap("manoir_bibli");
+    const TileMap& manoir_corridor = p_ressourceRepo.getMap("manoir_corridor");
 
     success = m_maps[manoirWC.GetName()].Init(p_pWindow, manoirWC);
+    success &= m_maps[manoir_bibli.GetName()].Init(p_pWindow, manoir_bibli);
+    success &= m_maps[manoir_corridor.GetName()].Init(p_pWindow, manoir_corridor);
 
     if (success) {
         success = initCharacters(p_ressourceRepo);
@@ -195,28 +199,26 @@ bool LevelState::initCharacters(const RessourcesRepo& p_ressourceRepo) {
     bool foundPetitPoint = false;
 
     // Find the positions of the characters
-    const TileMap* rooms [] = {&p_ressourceRepo.getMap("Manoir2_SJ.tmx"),
-                               &p_ressourceRepo.getMap("Manoir2_SA.tmx")};
-    const size_t nbRooms = sizeof(rooms) / sizeof(TileMap*);
-    for (size_t r = 0; r < nbRooms; r++) {
-        const TileMap* room = rooms[r];
-
+    std::map<std::string, LMap>::const_iterator it = m_maps.begin();
+    std::map<std::string, LMap>::const_iterator itend = m_maps.end();
+    for (; it != itend; ++it) {
+        const TileMap& room = p_ressourceRepo.getMap(it->second.getName());
         const TileMap::LayerNode* pNode = nullptr;
-        bool havePerso = room->FindLayerNode(PERSONNAGE, &pNode);
+        bool havePerso = room.FindLayerNode(PERSONNAGE, &pNode);
         if (havePerso) {
             int** tiles = pNode->m_tiles;
             for (int i = 0; i < pNode->m_heigth; i++) {
                 for (int j = 0; j < pNode->m_width; j++) {
                     int val = tiles[i][j];
                     if (val > 0) {
-                        const TileMap::TilesetNode& ts = room->FindTileset(val);
+                        const TileMap::TilesetNode& ts = room.FindTileset(val);
                         if (ts.m_tileSet.getName() == PETITPOINT) {
                             foundPetitPoint = true;
-                            m_PetitPoint.Warp(room->GetName(), j*room->GetTilewidth(), i*room->GetTileheight());
+                            m_PetitPoint.Warp(room.GetName(), j*room.GetTilewidth(), i*room.GetTileheight());
                         }
                         else
                         {
-                            m_enemies.push_back(Enemy(j*room->GetTilewidth(), i*room->GetTileheight(), room->GetName()));
+                            m_enemies.push_back(Enemy(j*room.GetTilewidth(), i*room.GetTileheight(), room.GetName()));
                         }
                     }
                 }

@@ -27,6 +27,7 @@ class TileSet
         bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename);
         const LAnimation& getAnimation(int id) const;
         const std::string& getName() const { return m_name; }
+        const std::string& getType(int id) const;
 
     private:
         std::string m_name;
@@ -37,6 +38,7 @@ class TileSet
         const LTexture* m_image;
 
         std::map<int, LAnimation> m_animations;
+        std::map<int, std::string> m_types;
 
         friend class TileMap;
 };
