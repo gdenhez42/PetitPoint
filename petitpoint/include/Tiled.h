@@ -68,6 +68,7 @@ class TileMap
         };
         struct Object {
             int m_id;
+            int m_gid;
             int m_x;
             int m_y;
             int m_w;

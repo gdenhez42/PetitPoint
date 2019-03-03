@@ -13,11 +13,11 @@ class RessourcesRepo;
 
 namespace pp {
 
-class LMap;
-class Enemy;
+    class LMap;
+    class Enemy;
 
-class LevelState : public GameState
-{
+    class LevelState : public GameState
+    {
     public:
         LevelState();
         ~LevelState();
@@ -25,14 +25,16 @@ class LevelState : public GameState
         bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
         GameState* Update(const SDL_Event& e, const Uint8*);
         void Render();
+        const LMap* getCurrentRoom() const {return m_currentRoom;}
+        LMap* getCurrentRoom() {return m_currentRoom;}
+        bool CheckCollisions(int, int, int, int) const;
+        void Warp(const std::string&);
 
     private:
 
         enum Dir { LEFT, RIGHT, UP, DOWN};
 
         bool initCharacters(const RessourcesRepo&);
-        void MovePetitPoint(Dir);
-        void Warp(const std::string&);
 
         std::map<std::string, LMap> m_maps;
         std::map<std::string, std::string> m_loads;
@@ -41,7 +43,7 @@ class LevelState : public GameState
         PetitPoint m_PetitPoint;
 
         const LWindow* m_pWindow;
-};
+    };
 
 }
 

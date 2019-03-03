@@ -4,7 +4,7 @@
 
 namespace {
     const int IMAGE_SIZE = 64;
-    const std::string PIKA_TS = "pika.tsx";
+    const std::string PIKA_TS = "Assassin";
 }
 
 namespace pp {

@@ -2,16 +2,18 @@
 #define PETITPOINT_H
 
 #include "LTexture.h"
-#include "command.h"
 #include "Personage.h"
 #include "LAnimation.h"
+#include "Utilities.h"
 
 class RessourcesRepo;
 
 namespace pp {
 
-class PetitPoint : public pp::Personage
-{
+    class LevelState;
+
+    class PetitPoint : public pp::Personage
+    {
     public:
         static const int WALK_SPEED;
         static const int IMAGE_SIZE;
@@ -20,7 +22,8 @@ class PetitPoint : public pp::Personage
         virtual ~PetitPoint();
 
         void Init(const RessourcesRepo& resources);
-        void Update(Command::Command command);
+        void Update(LevelState&, const Uint8*);
+        void MovePetitPoint(LevelState&, Dir d);
 
     private:
 
@@ -34,7 +37,7 @@ class PetitPoint : public pp::Personage
         LAnimation m_rightIdle;
         LAnimation m_rightWalk;
 
-};
+    };
 
 }
 

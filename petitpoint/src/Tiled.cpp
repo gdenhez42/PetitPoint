@@ -191,15 +191,19 @@ namespace pp
                         while (child != nullptr) {
                             Object obj;
                             obj.m_id = child->IntAttribute("id");
+                            obj.m_gid = child->IntAttribute("gid");
                             obj.m_x = child->IntAttribute("x");
                             obj.m_y = child->IntAttribute("y");
                             obj.m_w = child->IntAttribute("width");
                             obj.m_h = child->IntAttribute("height");
                             obj.m_type = child->Attribute("type");
-                            tinyxml2::XMLElement* prop = child->FirstChildElement()->FirstChildElement();
-                            while (prop != nullptr) {
-                                obj.m_properties[prop->Attribute("name")] = prop->Attribute("value");
-                                prop  = prop->NextSiblingElement();
+                            tinyxml2::XMLElement* props = child->FirstChildElement();
+                            if (props != nullptr) {
+                                tinyxml2::XMLElement* prop = props->FirstChildElement();
+                                while (prop != nullptr) {
+                                    obj.m_properties[prop->Attribute("name")] = prop->Attribute("value");
+                                    prop = prop->NextSiblingElement();
+                                }
                             }
                             objgr.m_objects.push_back(obj);
                             child = child->NextSiblingElement();
