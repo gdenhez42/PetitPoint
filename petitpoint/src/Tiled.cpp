@@ -197,6 +197,7 @@ namespace pp
                             obj.m_w = child->IntAttribute("width");
                             obj.m_h = child->IntAttribute("height");
                             obj.m_type = child->Attribute("type");
+                            obj.m_name = child->Attribute("name") ? child->Attribute("name") : "";
                             tinyxml2::XMLElement* props = child->FirstChildElement();
                             if (props != nullptr) {
                                 tinyxml2::XMLElement* prop = props->FirstChildElement();

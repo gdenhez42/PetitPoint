@@ -52,7 +52,7 @@ namespace pp
 
         if (success) {
             success = tilemap.FindLayerNode(BACKGROUND, &backgroundNode, &backgroundTileset);
-            //success &= tilemap.FindObjectGroup(WARPS, &warps);
+            success &= tilemap.FindObjectGroup(WARPS, &warps);
         }
 
         // Initialize tiles of map
@@ -78,25 +78,23 @@ namespace pp
                 }
 
             // This is a copy because m_properties would need to be non const... whatever
-            /*for (TileMap::Object obj : warps->m_objects)
-              {
-              Zone warp;
+            for (TileMap::Object obj : warps->m_objects)
+                {
+                    Zone warp;
 
-              warp.m_x = obj.m_x;
-              warp.m_y = obj.m_y;
-              warp.m_h = obj.m_h;
-              warp.m_w = obj.m_w;
-              if (obj.m_type == LOAD) {
-              warp.m_name = obj.m_properties[LOAD];
-              m_loads[warp.m_name] = warp;
-              } else if (obj.m_type == WARP) {
-              warp.m_name = obj.m_properties[WARP];
-              m_warps[warp.m_name] = warp;
-
-              }
+                    warp.m_x = obj.m_x;
+                    warp.m_y = obj.m_y;
+                    warp.m_h = obj.m_h;
+                    warp.m_w = obj.m_w;
+                    warp.m_name = obj.m_name;
+                    if (obj.m_type == LOAD) {
+                        m_loads[warp.m_name] = warp;
+                    } else if (obj.m_type == WARP) {
+                        m_warps[warp.m_name] = warp;
+                    }
 
 
-              }*/
+                }
         }
 
         return success;
