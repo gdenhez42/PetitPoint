@@ -3,7 +3,11 @@
 
 #include "LWindow.h"
 #include "GameState.h"
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 /***********************************************
 The game machine is the component that holds the

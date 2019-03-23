@@ -5,8 +5,13 @@
 #include "Tiled.h"
 #include "Enemy.h"
 #include "GameState.h"
-#include <SDL2/SDL.h>
 #include <vector>
+
+#ifdef WIN32
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 class LWindow;
 class RessourcesRepo;
