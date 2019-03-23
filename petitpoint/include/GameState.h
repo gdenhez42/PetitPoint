@@ -3,7 +3,11 @@
 
 #include "LWindow.h"
 #include "RessourcesRepo.h"
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 /*********************************************
 State DP so our game can go to different transitions

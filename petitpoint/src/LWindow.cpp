@@ -1,7 +1,12 @@
 #include "LWindow.h"
 
-#include <SDL2/SDL.h>
 #include <stdio.h>
+
+#ifdef WIN32
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 LWindow::LWindow(int p_w, int p_h)
 : m_w(p_w),

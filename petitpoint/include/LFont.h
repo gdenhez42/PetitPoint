@@ -1,7 +1,12 @@
 #ifndef LFONT_H
 #define LFONT_H
 
+#ifdef WIN32
+#include <SDL_ttf.h>
+#else
 #include <SDL2/SDL_ttf.h>
+#endif
+
 #include <string>
 
 /*********************************************

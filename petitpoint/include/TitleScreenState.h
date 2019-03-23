@@ -3,7 +3,7 @@
 
 #include "GameState.h"
 #include "LTexture.h"
-#include <SDL2/SDL_ttf.h>
+
 
 class TitleScreenState : public GameState
 {

@@ -1,7 +1,11 @@
 #ifndef LWINDOW_H
 #define LWINDOW_H
 
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 class LWindow
 {

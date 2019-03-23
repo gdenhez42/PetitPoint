@@ -11,7 +11,12 @@ Utility classes to read tiled map (see https://www.mapeditor.org/)
 #include <string>
 #include <vector>
 #include <map>
+
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 class RessourcesRepo;
 

@@ -3,9 +3,17 @@
 
 #include "LWindow.h"
 #include "LFont.h"
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL.h>
+
+
 #include <string>
+
+#ifdef WIN32
+#include <SDL.h>
+#include <SDL_ttf.h>
+#else
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#endif
 
 class LTexture
 {
