@@ -1,8 +1,13 @@
 #include "GameMachine.h"
 #include "TitleScreenState.h"
 #include "LevelState.h"
+
+#ifdef WIN32
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#endif
+
 
 namespace {
     const int SCREEN_WIDTH = 640;

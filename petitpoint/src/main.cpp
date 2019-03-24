@@ -1,3 +1,5 @@
+#define SDL_MAIN_HANDLED
+
 #include "GameMachine.h"
 
 int main( int argc, char* args[] )
