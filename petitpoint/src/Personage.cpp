@@ -33,4 +33,8 @@ namespace pp {
 
     }
 
+    void Personage::Move(LevelState& p_rLevelState, int p_dx, int p_dy)
+    {
+        
+    }
 }

@@ -39,6 +39,7 @@ namespace pp {
         void Render(const LevelState& p_LevelState);
         void SetPos(int x, int y) { m_x = x; m_y = y; }
         void Move(int dx, int dy) { m_x += dx; m_y += dy; }
+        void Move(LevelState&, int dx, int dy);
         void Warp(const std::string& room, int x, int y) { m_room = room; m_x = x; m_y = y; }
 
     protected:

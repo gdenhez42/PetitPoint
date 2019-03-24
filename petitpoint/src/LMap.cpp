@@ -159,21 +159,11 @@ namespace pp
             m_tiles[iy][ix].m_blocked;
     }
 
-    bool LMap::isWarp(int x, int y, std::string& p_rWarp) const
-    {
-        bool isWarp = false;
-        std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
-        for (it = m_warps.begin(); it != itend && !isWarp; ++it) {
-            const Zone& warp = it->second;
-            isWarp = (x >= warp.m_x && x < (warp.m_x + warp.m_w)
-                      && y >= warp.m_y && y < (warp.m_y + warp.m_h));
-            p_rWarp = warp.m_name;
-        }
-
-        return isWarp;
-    }
-
-    bool LMap::inWarp(int x, int y, int w, int h) const
+    /********************************************************************
+      Check if the rectangle is in the warp. Set the p_rWarp parameter
+      if it is.
+     *******************************************************************/
+    bool LMap::inWarp(int x, int y, int w, int h, std::string& p_rWarp) const
     {
         bool inWarp = false;
         std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
@@ -181,6 +171,7 @@ namespace pp
             const Zone& warp = it->second;
             inWarp = ((x+w) >= warp.m_x && x < (warp.m_x + warp.m_w)
                       && (y+h) >= warp.m_y && y < (warp.m_y + warp.m_h));
+            p_rWarp = warp.m_name;
         }
 
         return inWarp;

@@ -108,12 +108,12 @@ namespace pp {
         const Personage::HitBox& hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
-        bool inWarp = currentRoom->inWarp(getX()+hb.m_x, getY()+hb.m_y, hb.m_w, hb.m_h);
+        std::string warp;
+        bool inWarp = currentRoom->inWarp(getX()+hb.m_x, getY()+hb.m_y, hb.m_w, hb.m_h, warp);
         int dx = 0;
         int dy = 0;
         int toMove = WALK_SPEED;
         bool warped = false;
-        std::string warp;
 
         while (toMove > 0) {
             int x1, y1, x2, y2, ddx, ddy;
@@ -157,7 +157,7 @@ namespace pp {
                 {
                     toMove = 0;
                 }
-            else if (!inWarp && (currentRoom->isWarp(x1, y1, warp) || currentRoom->isWarp(x2, y2, warp)))
+            else if (!inWarp && (currentRoom->inWarp(x1, y1, hb.m_w, hb.m_h, warp) || currentRoom->inWarp(x2, y2, hb.m_w, hb.m_h, warp)))
                 {
                     toMove = 0;
                     warped = true;
@@ -173,7 +173,6 @@ namespace pp {
         if (warped) {
             p_rLevelState.Warp(warp);
         } else {
-            currentRoom->Update(currentRoom->getX()-dx, currentRoom->getY()-dy);
             Move(dx, dy);
         }
 

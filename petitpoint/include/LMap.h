@@ -36,8 +36,7 @@ class LMap
         int getY() const {return m_y;}
         const std::string& getName() const {return m_name;}
         bool isBlocked(int x, int y) const;
-        bool isWarp(int x, int y, std::string& p_rWarp) const;
-        bool inWarp(int x, int y, int w, int h) const;
+        bool inWarp(int, int, int, int, std::string&) const;
         std::vector<std::string> getLoads() const;
         const Zone& getLoad(const std::string& p_load) const { return m_loads.at(p_load); }
 
