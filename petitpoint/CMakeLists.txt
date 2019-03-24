@@ -28,12 +28,10 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(PetitPoint ${SOURCES})
 
-if (${WIN32})
 
-	target_link_libraries(PetitPoint SDL2
-                                     SDL2_image
-									 SDL2_ttf
-									 tinyxml2)
+target_link_libraries(PetitPoint SDL2
+  SDL2_image
+  SDL2_ttf
+  tinyxml2)
 
-endif()
 
