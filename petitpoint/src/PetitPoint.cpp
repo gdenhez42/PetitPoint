@@ -14,7 +14,7 @@ namespace pp {
     const int PetitPoint::IMAGE_SIZE = 64;
 
     PetitPoint::PetitPoint()
-        : Personage(HitBox(12,40,40,22), 0, 0, ""),
+        : Personage(Rectangle(12,40,40,22), 0, 0, ""),
           m_direction(DOWN),
           m_frontIdle(),
           m_frontWalk(),
@@ -105,7 +105,7 @@ namespace pp {
     ***********************************************************/
     void PetitPoint::MovePetitPoint(LevelState& p_rLevelState, Dir d)
     {
-        const Personage::HitBox& hb = getGroundHb();
+        const Rectangle& hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
         std::string warp;

@@ -6,7 +6,7 @@
 
 namespace pp {
 
-    Personage::Personage(const HitBox& hitbox, int x, int y, const std::string& room)
+    Personage::Personage(const Rectangle& hitbox, int x, int y, const std::string& room)
         : m_room(room),
           m_x(x),
           m_y(y),

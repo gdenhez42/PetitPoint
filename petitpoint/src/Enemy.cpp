@@ -10,7 +10,7 @@ namespace {
 namespace pp {
 
 Enemy::Enemy(int x, int y, const std::string& room)
-: Personage(HitBox(0,0,64,64), x,y, room)
+: Personage(Rectangle(0,0,64,64), x,y, room)
 {
     //ctor
 }
