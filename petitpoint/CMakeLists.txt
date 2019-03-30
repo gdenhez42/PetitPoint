@@ -1,6 +1,4 @@
 cmake_minimum_required (VERSION 3.12.3)
-project (PetitPoint)
-
 
 
 if (${WIN32})
@@ -24,12 +22,28 @@ else()
 
 endif()
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+add_library(PetitPointLib STATIC src/tiled/Tiled.cpp
+                                 src/Enemy.cpp
+						         src/GameMachine.cpp
+						         src/GameState.cpp
+						         src/LAnimation.cpp
+						         src/LevelState.cpp
+						         src/LFont.cpp
+						         src/LMap.cpp
+						         src/LTexture.cpp
+						         src/LWindow.cpp
+						         src/Manoir.cpp
+						         src/Personage.cpp
+						         src/petitpoint.cpp
+						         src/RessourcesRepo.cpp
+						         src/TitleScreenState.cpp
+								 src/Utilities.cpp)
 
-add_executable(PetitPoint ${SOURCES})
+add_executable(PetitPoint src/main.cpp)
 
 
-target_link_libraries(PetitPoint SDL2
+target_link_libraries(PetitPoint PetitPointLib
+  SDL2
   SDL2_image
   SDL2_ttf
   tinyxml2)
