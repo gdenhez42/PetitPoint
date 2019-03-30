@@ -33,8 +33,8 @@ namespace pp {
 
     }
 
-    void Personage::Move(LevelState& p_rLevelState, int p_dx, int p_dy)
-    {
-        
-    }
+	Rectangle Personage::getGroundHb() const {
+		return Rectangle(getX() + m_groundHb.m_x, getY() + m_groundHb.m_y, m_groundHb.m_w, m_groundHb.m_h);
+	}
+
 }

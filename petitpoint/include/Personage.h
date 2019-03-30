@@ -22,17 +22,12 @@ namespace pp {
 
         int getX() const {return m_x;}
         int getY() const {return m_y;}
-        int hitBoxX() const {return m_x + m_groundHb.m_x;}
-        int hitBoxY() const {return m_y + m_groundHb.m_y;}
-        int hitBoxW() const {return m_groundHb.m_w;}
-        int hitBoxH() const {return m_groundHb.m_h;}
         const std::string& getRoom() const {return m_room;}
-        const Rectangle& getGroundHb() const {return m_groundHb;}
+		Rectangle getGroundHb() const;
 
         void Render(const LevelState& p_LevelState);
         void SetPos(int x, int y) { m_x = x; m_y = y; }
         void Move(int dx, int dy) { m_x += dx; m_y += dy; }
-        virtual void Move(LevelState&, int dx, int dy);
         void Warp(const std::string& room, int x, int y) { m_room = room; m_x = x; m_y = y; }
 
     protected:

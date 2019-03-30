@@ -10,7 +10,7 @@ namespace {
 
 namespace pp {
 
-    const int PetitPoint::WALK_SPEED = 2;
+    const int PetitPoint::WALK_SPEED = 3;
     const int PetitPoint::IMAGE_SIZE = 64;
 
     PetitPoint::PetitPoint()
@@ -50,8 +50,10 @@ namespace pp {
     void PetitPoint::Update(LevelState& p_rLevelState,
                             const Uint8* p_KeyboardState)
     {
+		int toMove = WALK_SPEED;
+
         if (p_KeyboardState[SDL_SCANCODE_UP]) {
-            MovePetitPoint(p_rLevelState, UP);
+            MovePetitPoint(p_rLevelState, 0, 0-toMove);
             m_direction = 0;
             if (m_currentAnimation != &m_backWalk) {
                 m_currentAnimation = &m_backWalk;
@@ -59,7 +61,7 @@ namespace pp {
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_DOWN]) {
-            MovePetitPoint(p_rLevelState, DOWN);
+            MovePetitPoint(p_rLevelState, 0, toMove);
             m_direction = 1;
             if (m_currentAnimation != &m_frontWalk) {
                 m_currentAnimation = &m_frontWalk;
@@ -67,7 +69,7 @@ namespace pp {
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_LEFT]) {
-            MovePetitPoint(p_rLevelState, LEFT);
+            MovePetitPoint(p_rLevelState, 0-toMove, 0);
             m_direction = LEFT;
             if (m_currentAnimation != &m_leftWalk) {
                 m_currentAnimation = &m_leftWalk;
@@ -75,7 +77,7 @@ namespace pp {
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_RIGHT]) {
-            MovePetitPoint(p_rLevelState, RIGHT);
+            MovePetitPoint(p_rLevelState, toMove, 0);
             m_direction = RIGHT;
             if (m_currentAnimation != &m_rightWalk) {
                 m_currentAnimation = &m_rightWalk;
@@ -103,71 +105,52 @@ namespace pp {
     /***********************************************************
      There must be a better way to do the walking part :-(
     ***********************************************************/
-    void PetitPoint::MovePetitPoint(LevelState& p_rLevelState, Dir d)
+    void PetitPoint::MovePetitPoint(LevelState& p_rLevelState, int p_dx, int p_dy)
     {
-        const Rectangle& hb = getGroundHb();
+        const Rectangle hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
         std::string warp;
-        bool inWarp = currentRoom->inWarp(getX()+hb.m_x, getY()+hb.m_y, hb.m_w, hb.m_h, warp);
-        int dx = 0;
-        int dy = 0;
-        int toMove = WALK_SPEED;
+        bool inWarp = currentRoom->inWarp(hb, warp);
+        
         bool warped = false;
+		int dx = 0;
+		int dy = 0;
+        while (p_dx != 0 || p_dy != 0) {
+			int ddx = 0;
+			int ddy = 0;
+			
+			if (p_dx < 0) {
+				p_dx++;
+				ddx--;
+			}
+			if (p_dx > 0) {
+				p_dx--;
+				ddx++;
+			}
+			if (p_dy < 0) {
+				p_dy++;
+				ddy--;
+			}
+			if (p_dy > 0) {
+				p_dy--;
+				ddy++;
+			}
 
-        while (toMove > 0) {
-            int x1, y1, x2, y2, ddx, ddy;
+			Rectangle test(hb.m_x + dx + ddx, hb.m_y + dy + ddy, hb.m_w, hb.m_h);
 
-            switch (d) {
-            case LEFT:
-                x1 = getX()+hb.m_x+dx-1;
-                y1 = getY()+hb.m_y;
-                x2 = getX()+hb.m_x+dx-1;
-                y2 = getY()+hb.m_y+hb.m_h;
-                ddx = -1;
-                ddy = 0;
-                break;
-            case RIGHT:
-                x1 = getX()+hb.m_x+hb.m_w+dx+1;
-                y1 = getY()+hb.m_y;
-                x2 = getX()+hb.m_x+hb.m_w+dx+1;
-                y2 = getY()+hb.m_y+hb.m_h;
-                ddx = 1;
-                ddy = 0;
-                break;
-            case UP:
-                x1 = getX()+hb.m_x;
-                y1 = getY()+hb.m_y+dy-1;
-                x2 = getX()+hb.m_x+hb.m_w;
-                y2 = getY()+hb.m_y+dy-1;
-                ddx = 0;
-                ddy = -1;
-                break;
-            case DOWN:
-                x1 = getX()+hb.m_x;
-                y1 = getY()+hb.m_y+hb.m_h+dy+1;
-                x2 = getX()+hb.m_x+hb.m_w;
-                y2 = getY()+hb.m_y+hb.m_h+dy+1;
-                ddx = 0;
-                ddy = 1;
-                break;
+            if (currentRoom->isBlocked(test) || p_rLevelState.CheckCollisions(test))
+            {
+				p_dx = 0; p_dy = 0;
             }
-
-            if (currentRoom->isBlocked(x1, y1) || currentRoom->isBlocked(x2, y2) || p_rLevelState.CheckCollisions(getX() + hb.m_x + dx + ddx, getY() + hb.m_y + dy + ddy, hb.m_w, hb.m_h))
-                {
-                    toMove = 0;
-                }
-            else if (!inWarp && (currentRoom->inWarp(x1, y1, hb.m_w, hb.m_h, warp) || currentRoom->inWarp(x2, y2, hb.m_w, hb.m_h, warp)))
-                {
-                    toMove = 0;
-                    warped = true;
-                }
+            else if (!inWarp && currentRoom->inWarp(test, warp))
+            {
+				p_dx = 0; p_dy = 0;
+            }
             else
-                {
-                    dx += ddx;
-                    dy += ddy;
-                    toMove--;
-                }
+            {
+                dx += ddx; dy += ddy;
+            }
         }
 
         if (warped) {
