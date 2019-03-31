@@ -27,7 +27,26 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 file(GLOB SOURCES "*.cpp")
 
-include_directories (../petitpoint/include)
+if (${WIN32})
+	link_directories("e:/vc_dev_libs/SDL2-2.0.9/lib/x64"
+					 "e:/vc_dev_libs/SDL2_ttf-2.0.15/lib/x64"
+					 "e:/vc_dev_libs/SDL2_image-2.0.4/lib/x64"
+					 ../external/tinyxml2/debug)
+
+	include_directories("e:/vc_dev_libs/SDL2-2.0.9/include"
+	                    "e:/vc_dev_libs/SDL2_image-2.0.4/include"
+						"e:/vc_dev_libs/SDL2_ttf-2.0.15/include"
+						../petitpoint/include
+						../petitpoint/include/tiled
+						../external/tinyxml2)
+
+else()
+	link_directories(../external/tinyxml2)
+	include_directories(../petitpoint/include
+						../petitpoint/include/tiled
+						../external/tinyxml2)
+
+endif()
 
 add_executable(PetitPointTest ${SOURCES})
 

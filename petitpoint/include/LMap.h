@@ -1,9 +1,16 @@
 #ifndef LMAP_H
 #define LMAP_H
 
+#include "Tiled.h"
 #include "Utilities.h"
 #include <string>
 #include <map>
+
+#ifdef WIN32
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 class LWindow;
 class RessourcesRepo;
@@ -46,6 +53,10 @@ class LMap
         void Render() const;
         void Update(int x, int y);
         void Update(const std::string&);
+
+		// Utilities to make things more user friendly
+		int AlignH(const Rectangle&) const;
+		bool AlignV(Rectangle&) const;
 
     private:
 

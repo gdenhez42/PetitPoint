@@ -17,6 +17,4 @@ namespace pp {
 
 }
 
-
-
 #endif // UTILITIES_H

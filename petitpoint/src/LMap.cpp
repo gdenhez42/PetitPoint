@@ -9,6 +9,7 @@ namespace {
     const char* WARP = "warp";
     const char* LOAD = "load";
     const char* WALL_TILE = "wall";
+	const int ALIGN_THRESHOLD = 3;
 }
 
 namespace pp
@@ -177,5 +178,29 @@ namespace pp
 
         return inWarp;
     }
+
+	/*********************************************************************
+	  Return the number of pixel a rectangle can move to not be blocked
+	  horizontally. Up to 3 pixels in absolute value.
+	**********************************************************************/
+	int LMap::AlignH(const Rectangle& p_Rec) const {
+	
+		int nbPixelLeft = m_tilewidth - p_Rec.m_x % m_tilewidth + 1;
+		int nbPixelRight = (p_Rec.m_x + p_Rec.m_w) % m_tilewidth;
+
+		if (nbPixelLeft <= ALIGN_THRESHOLD && 
+			!isBlocked(Rectangle(p_Rec.m_x + nbPixelLeft, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
+		{
+			return nbPixelLeft;
+		}
+
+		if (nbPixelRight <= ALIGN_THRESHOLD &&
+			!isBlocked(Rectangle(p_Rec.m_x - nbPixelRight, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
+		{
+			return 0-nbPixelRight;
+		}
+
+		return 0;
+	}
 }
 

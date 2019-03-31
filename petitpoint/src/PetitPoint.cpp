@@ -134,10 +134,22 @@ namespace pp {
 
 			Rectangle test(hb.m_x + dx, hb.m_y + dy, hb.m_w, hb.m_h);
 
-            if (currentRoom->isBlocked(test) || p_rLevelState.CheckCollisions(test))
+            if (currentRoom->isBlocked(test))
             {
-				p_dx = 0; p_dy = 0;
+				if (dy != 0) {
+					int align = currentRoom->AlignH(test);
+					if (align != 0) {
+						Move(align, dy);
+					}
+				}
+				else {
+					p_dx = 0; p_dy = 0;
+				}
+
             }
+			else if (p_rLevelState.CheckCollisions(test)) {
+				p_dx = 0; p_dy = 0;
+			}
             else if (!inWarp && currentRoom->inWarp(test, warp))
             {
 				p_dx = 0; p_dy = 0;
@@ -149,6 +161,5 @@ namespace pp {
             }
         }
     }
-
 }
 
