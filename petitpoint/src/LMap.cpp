@@ -152,9 +152,9 @@ namespace pp
 		int endx = (p_Rec.m_x + p_Rec.m_w - 1) / m_tilewidth;
 		int endy = (p_Rec.m_y + p_Rec.m_h - 1) / m_tileheight;
 
-		for (; ix <= endx; ix++) {
-			for (; iy <= endy; iy++) {
-				blocked = m_tiles[iy][ix].m_blocked;
+		for (; ix <= endx && !blocked; ix++) {
+			for (int j = iy; j <= endy && !blocked; j++) {
+				blocked = m_tiles[j][ix].m_blocked;
 			}
 		}
 

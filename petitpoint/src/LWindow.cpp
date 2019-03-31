@@ -76,3 +76,10 @@ void LWindow::Refresh()
 {
     SDL_RenderPresent(m_pRenderer);
 }
+
+void LWindow::RenderRec(const pp::Rectangle& p_Rec) const
+{
+	SDL_SetRenderDrawColor(m_pRenderer, 0xFF, 0x00, 0x00, 0xFF);
+	SDL_Rect rec = { p_Rec.m_x, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h };
+	SDL_RenderDrawRect(m_pRenderer, &rec);
+}

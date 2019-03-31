@@ -102,42 +102,37 @@ namespace pp {
         }
     }
 
-    /***********************************************************
-     There must be a better way to do the walking part :-(
-    ***********************************************************/
     void PetitPoint::MovePetitPoint(LevelState& p_rLevelState, int p_dx, int p_dy)
     {
-        const Rectangle hb = getGroundHb();
+        Rectangle hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
         std::string warp;
         bool inWarp = currentRoom->inWarp(hb, warp);
         
-        bool warped = false;
-		int dx = 0;
-		int dy = 0;
         while (p_dx != 0 || p_dy != 0) {
-			int ddx = 0;
-			int ddy = 0;
+			hb = getGroundHb();
+			int dx = 0;
+			int dy = 0;
 			
 			if (p_dx < 0) {
 				p_dx++;
-				ddx--;
+				dx--;
 			}
 			if (p_dx > 0) {
 				p_dx--;
-				ddx++;
+				dx++;
 			}
 			if (p_dy < 0) {
 				p_dy++;
-				ddy--;
+				dy--;
 			}
 			if (p_dy > 0) {
 				p_dy--;
-				ddy++;
+				dy++;
 			}
 
-			Rectangle test(hb.m_x + dx + ddx, hb.m_y + dy + ddy, hb.m_w, hb.m_h);
+			Rectangle test(hb.m_x + dx, hb.m_y + dy, hb.m_w, hb.m_h);
 
             if (currentRoom->isBlocked(test) || p_rLevelState.CheckCollisions(test))
             {
@@ -146,19 +141,13 @@ namespace pp {
             else if (!inWarp && currentRoom->inWarp(test, warp))
             {
 				p_dx = 0; p_dy = 0;
+				p_rLevelState.Warp(warp);
             }
             else
             {
-                dx += ddx; dy += ddy;
+				Move(dx, dy);
             }
         }
-
-        if (warped) {
-            p_rLevelState.Warp(warp);
-        } else {
-            Move(dx, dy);
-        }
-
     }
 
 }

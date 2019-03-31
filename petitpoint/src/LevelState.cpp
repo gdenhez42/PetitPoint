@@ -83,6 +83,11 @@ namespace pp {
             enemy.Render(*this);
         }
         m_PetitPoint.Render(*this);
+
+		Rectangle hb = m_PetitPoint.getGroundHb();
+		hb.m_x += m_currentRoom->getX();
+		hb.m_y += m_currentRoom->getY();
+		m_pWindow->RenderRec(hb);
     }
 
     void LevelState::Warp(const std::string& p_warp)

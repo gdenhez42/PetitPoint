@@ -1,6 +1,8 @@
 #ifndef LWINDOW_H
 #define LWINDOW_H
 
+#include "Utilities.h"
+
 #ifdef WIN32
 #include <SDL.h>
 #else
@@ -21,6 +23,9 @@ class LWindow
         bool Load();
         void Clear();
         void Refresh();
+
+		// Some debugging utilities
+		void RenderRec(const pp::Rectangle&) const;
 
     private:
         void Free();
