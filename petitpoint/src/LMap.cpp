@@ -9,6 +9,7 @@ namespace {
     const char* WARP = "warp";
     const char* LOAD = "load";
     const char* WALL_TILE = "wall";
+	const int ALIGN_THRESHOLD = 3;
 }
 
 namespace pp
@@ -79,22 +80,14 @@ namespace pp
 
             // This is a copy because m_properties would need to be non const... whatever
             for (TileMap::Object obj : warps->m_objects)
-                {
-                    Zone warp;
-
-                    warp.m_x = obj.m_x;
-                    warp.m_y = obj.m_y;
-                    warp.m_h = obj.m_h;
-                    warp.m_w = obj.m_w;
-                    warp.m_name = obj.m_name;
-                    if (obj.m_type == LOAD) {
-                        m_loads[warp.m_name] = warp;
-                    } else if (obj.m_type == WARP) {
-                        m_warps[warp.m_name] = warp;
-                    }
-
-
+            {
+                Zone warp(obj.m_x, obj.m_y, obj.m_w, obj.m_h, obj.m_name);
+                if (obj.m_type == LOAD) {
+                    m_loads.insert(std::make_pair(warp.m_name, warp));
+                } else if (obj.m_type == WARP) {
+                    m_warps.insert(std::make_pair(warp.m_name, warp));
                 }
+            }
         }
 
         return success;
@@ -132,9 +125,9 @@ namespace pp
 
     void LMap::Update(const std::string& p_load)
     {
-        const Zone& load = m_loads[p_load];
-        int middle_x = load.m_x + load.m_w/2;
-        int middle_y = load.m_y + load.m_h/2;
+        const Zone& load = m_loads.find(p_load)->second;
+        int middle_x = load.m_rec.m_x + load.m_rec.m_w/2;
+        int middle_y = load.m_rec.m_y + load.m_rec.m_h/2;
         m_x = m_pWindow->getWidth()/2 - middle_x;
         m_y = m_pWindow->getHeight()/2 - middle_y;
     }
@@ -149,32 +142,65 @@ namespace pp
         return warps;
     }
 
-    bool LMap::isBlocked(int x, int y) const
+    bool LMap::isBlocked(const Rectangle& p_Rec) const
     {
-        // Index of tile
-        int ix = x/m_tilewidth;
-        int iy = y/m_tileheight;
+		bool blocked = (p_Rec.m_x < 0 || p_Rec.m_x + p_Rec.m_w >= m_width*m_tilewidth ||
+			p_Rec.m_y < 0 || p_Rec.m_y + p_Rec.m_h >= m_heigth*m_tileheight);
 
-        return !(ix >= 0 && ix < m_width && iy >= 0 && iy < m_heigth) ||
-            m_tiles[iy][ix].m_blocked;
+		int ix = p_Rec.m_x / m_tilewidth;
+		int iy = p_Rec.m_y / m_tileheight;
+
+		int endx = (p_Rec.m_x + p_Rec.m_w - 1) / m_tilewidth;
+		int endy = (p_Rec.m_y + p_Rec.m_h - 1) / m_tileheight;
+
+		for (; ix <= endx && !blocked; ix++) {
+			for (int j = iy; j <= endy && !blocked; j++) {
+				blocked = m_tiles[j][ix].m_blocked;
+			}
+		}
+
+        return blocked;
     }
 
     /********************************************************************
       Check if the rectangle is in the warp. Set the p_rWarp parameter
       if it is.
      *******************************************************************/
-    bool LMap::inWarp(int x, int y, int w, int h, std::string& p_rWarp) const
+    bool LMap::inWarp(const Rectangle& p_Rec, std::string& p_rWarp) const
     {
         bool inWarp = false;
         std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
         for (it = m_warps.begin(); it != itend && !inWarp; ++it) {
             const Zone& warp = it->second;
-            inWarp = ((x+w) >= warp.m_x && x < (warp.m_x + warp.m_w)
-                      && (y+h) >= warp.m_y && y < (warp.m_y + warp.m_h));
+            inWarp = AreColliding(p_Rec, warp.m_rec);
             p_rWarp = warp.m_name;
         }
 
         return inWarp;
     }
+
+	/*********************************************************************
+	  Return the number of pixel a rectangle can move to not be blocked
+	  horizontally. Up to 3 pixels in absolute value.
+	**********************************************************************/
+	int LMap::AlignH(const Rectangle& p_Rec) const {
+	
+		int nbPixelLeft = m_tilewidth - p_Rec.m_x % m_tilewidth + 1;
+		int nbPixelRight = (p_Rec.m_x + p_Rec.m_w) % m_tilewidth;
+
+		if (nbPixelLeft <= ALIGN_THRESHOLD && 
+			!isBlocked(Rectangle(p_Rec.m_x + nbPixelLeft, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
+		{
+			return nbPixelLeft;
+		}
+
+		if (nbPixelRight <= ALIGN_THRESHOLD &&
+			!isBlocked(Rectangle(p_Rec.m_x - nbPixelRight, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
+		{
+			return 0-nbPixelRight;
+		}
+
+		return 0;
+	}
 }
 

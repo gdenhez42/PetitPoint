@@ -1,8 +1,16 @@
 #ifndef LMAP_H
 #define LMAP_H
 
+#include "Tiled.h"
+#include "Utilities.h"
 #include <string>
 #include <map>
+
+#ifdef WIN32
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 class LWindow;
 class RessourcesRepo;
@@ -21,11 +29,10 @@ class LMap
         };
 
         struct Zone {
-            int m_x;
-            int m_y;
-            int m_w;
-            int m_h;
+			Rectangle m_rec;
             std::string m_name;
+			Zone(int p_x, int p_y, int p_w, int p_h, const std::string& p_name)
+				: m_rec(p_x, p_y, p_w, p_h), m_name(p_name) {}
         };
 
         LMap();
@@ -35,8 +42,8 @@ class LMap
         int getX() const {return m_x;}
         int getY() const {return m_y;}
         const std::string& getName() const {return m_name;}
-        bool isBlocked(int x, int y) const;
-        bool inWarp(int, int, int, int, std::string&) const;
+        bool isBlocked(const Rectangle&) const;
+        bool inWarp(const Rectangle&, std::string&) const;
         std::vector<std::string> getLoads() const;
         const Zone& getLoad(const std::string& p_load) const { return m_loads.at(p_load); }
 
@@ -46,6 +53,10 @@ class LMap
         void Render() const;
         void Update(int x, int y);
         void Update(const std::string&);
+
+		// Utilities to make things more user friendly
+		int AlignH(const Rectangle&) const;
+		bool AlignV(Rectangle&) const;
 
     private:
 

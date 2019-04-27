@@ -1,5 +1,4 @@
 cmake_minimum_required (VERSION 3.12.3)
-project (PetitPoint)
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
@@ -26,22 +25,39 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
                  ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
                  EXCLUDE_FROM_ALL)
 
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
-  include_directories("${gtest_SOURCE_DIR}/include")
-endif()
-
 file(GLOB SOURCES "*.cpp")
+
+if (${WIN32})
+	link_directories("e:/vc_dev_libs/SDL2-2.0.9/lib/x64"
+					 "e:/vc_dev_libs/SDL2_ttf-2.0.15/lib/x64"
+					 "e:/vc_dev_libs/SDL2_image-2.0.4/lib/x64"
+					 ../external/tinyxml2/debug)
+
+	include_directories("e:/vc_dev_libs/SDL2-2.0.9/include"
+	                    "e:/vc_dev_libs/SDL2_image-2.0.4/include"
+						"e:/vc_dev_libs/SDL2_ttf-2.0.15/include"
+						../petitpoint/include
+						../petitpoint/include/tiled
+						../external/tinyxml2)
+
+else()
+	link_directories(../external/tinyxml2)
+	include_directories(../petitpoint/include
+						../petitpoint/include/tiled
+						../external/tinyxml2)
+
+endif()
 
 add_executable(PetitPointTest ${SOURCES})
 
+
 if (${WIN32})
-target_link_libraries(PetitPointTest gtest
+target_link_libraries(PetitPointTest PetitPointLib
+                                     gtest
                                      gtest_main)
 else()
-target_link_libraries(PetitPointTest gtest
+target_link_libraries(PetitPointTest PetitPointLib
+                                     gtest
                                      gtest_main
                                      pthread)
 endif()

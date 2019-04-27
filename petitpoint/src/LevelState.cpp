@@ -83,6 +83,11 @@ namespace pp {
             enemy.Render(*this);
         }
         m_PetitPoint.Render(*this);
+
+		Rectangle hb = m_PetitPoint.getGroundHb();
+		hb.m_x += m_currentRoom->getX();
+		hb.m_y += m_currentRoom->getY();
+		m_pWindow->RenderRec(hb);
     }
 
     void LevelState::Warp(const std::string& p_warp)
@@ -91,8 +96,8 @@ namespace pp {
         m_currentRoom = &m_maps[nextMap];
 
         const LMap::Zone& zone = m_currentRoom->getLoad(p_warp);
-        int middle_x = zone.m_x + zone.m_w/2;
-        int middle_y = zone.m_y + zone.m_h/2;
+        int middle_x = zone.m_rec.m_x + zone.m_rec.m_w/2;
+        int middle_y = zone.m_rec.m_y + zone.m_rec.m_h/2;
 
         m_currentRoom->Update(m_pWindow->getWidth()/2 - middle_x,
                               m_pWindow->getHeight()/2 - middle_y);
@@ -105,18 +110,14 @@ namespace pp {
     /********************************************************************
      Check for collisions with enemies in the room
     ********************************************************************/
-    bool LevelState::CheckCollisions(int x, int y, int w, int h) const
+    bool LevelState::CheckCollisions(const Rectangle& p_Rec) const
     {
         for (const Enemy& enemy : m_enemies) {
 
-            int ex = enemy.hitBoxX();
-            int ew = enemy.hitBoxW();
-            int ey = enemy.hitBoxY();
-            int eh = enemy.hitBoxH();
+            Rectangle ex = enemy.getGroundHb();
 
             if (enemy.getRoom() == m_currentRoom->getName() &&
-                !(x + w < ex || ex + ew < x) &&
-                !(y + h < ey || ey + eh < y)) {
+                AreColliding(ex, p_Rec)) {
                 return true;
             }
         }

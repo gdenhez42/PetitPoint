@@ -6,7 +6,7 @@
 
 namespace pp {
 
-    Personage::Personage(const HitBox& hitbox, int x, int y, const std::string& room)
+    Personage::Personage(const Rectangle& hitbox, int x, int y, const std::string& room)
         : m_room(room),
           m_x(x),
           m_y(y),
@@ -33,8 +33,8 @@ namespace pp {
 
     }
 
-    void Personage::Move(LevelState& p_rLevelState, int p_dx, int p_dy)
-    {
-        
-    }
+	Rectangle Personage::getGroundHb() const {
+		return Rectangle(getX() + m_groundHb.m_x, getY() + m_groundHb.m_y, m_groundHb.m_w, m_groundHb.m_h);
+	}
+
 }

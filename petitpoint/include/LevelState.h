@@ -1,6 +1,7 @@
 #ifndef FAKELEVELSTATE_H
 #define FAKELEVELSTATE_H
 
+#include "Utilities.h"
 #include "PetitPoint.h"
 #include "Tiled.h"
 #include "Enemy.h"
@@ -32,12 +33,10 @@ namespace pp {
         void Render();
         const LMap* getCurrentRoom() const {return m_currentRoom;}
         LMap* getCurrentRoom() {return m_currentRoom;}
-        bool CheckCollisions(int, int, int, int) const;
+        bool CheckCollisions(const Rectangle&) const;
         void Warp(const std::string&);
 
     private:
-
-        enum Dir { LEFT, RIGHT, UP, DOWN};
 
         bool initCharacters(const RessourcesRepo&);
 

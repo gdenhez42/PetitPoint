@@ -23,7 +23,7 @@ namespace pp {
 
         void Init(const RessourcesRepo& resources);
         void Update(LevelState&, const Uint8*);
-        void MovePetitPoint(LevelState&, Dir d);
+        void MovePetitPoint(LevelState&, int, int);
 
     private:
 
