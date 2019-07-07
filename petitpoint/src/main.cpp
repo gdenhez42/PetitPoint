@@ -4,7 +4,7 @@
 
 int main( int argc, char* args[] )
 {
-    GameMachine gameMachine;
+    pp::GameMachine gameMachine;
 
 	bool success = true;
 

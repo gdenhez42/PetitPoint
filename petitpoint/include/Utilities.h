@@ -1,6 +1,8 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include <string>
+
 namespace pp {
 
     enum Dir { UP, DOWN, LEFT, RIGHT };
@@ -15,6 +17,7 @@ namespace pp {
 
     bool AreColliding(const Rectangle&, const Rectangle&);
 
+    void Log(const std::string& p_string);
 }
 
 #endif // UTILITIES_H

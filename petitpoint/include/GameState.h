@@ -9,6 +9,8 @@
 #include <SDL2/SDL.h>
 #endif
 
+namespace pp {
+
 /*********************************************
 State DP so our game can go to different transitions
 (title screen, level, dungeon...)
@@ -26,5 +28,7 @@ class GameState
 
     private:
 };
+
+}
 
 #endif // GAMESTATE_H

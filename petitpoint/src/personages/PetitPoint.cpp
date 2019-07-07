@@ -5,25 +5,26 @@
 #include "LMap.h"
 
 namespace {
-    const std::string PETITPOINT_TS = "Lore";
+    const std::string PETITPOINT_TS = "PetitLore";
+
+    // Animations
+    const std::string FRONT_IDLE = "front_idle";
+    const std::string FRONT_WALK = "front_walk";
+    const std::string BACK_IDLE = "back_idle";
+    const std::string BACK_WALK = "back_walk";
+    const std::string RIGHT_IDLE = "right_idle";
+    const std::string RIGHT_WALK = "right_walk";
+    const std::string LEFT_IDLE = "left_idle";
+    const std::string LEFT_WALK = "left_walk";
 }
 
 namespace pp {
 
     const int PetitPoint::WALK_SPEED = 3;
-    const int PetitPoint::IMAGE_SIZE = 64;
 
     PetitPoint::PetitPoint()
-        : Personage(Rectangle(12,40,40,22), 0, 0, ""),
-          m_direction(DOWN),
-          m_frontIdle(),
-          m_frontWalk(),
-          m_backIdle(),
-          m_backWalk(),
-          m_leftIdle(),
-          m_leftWalk(),
-          m_rightIdle(),
-          m_rightWalk()
+        : Personage(0, 0, ""),
+          m_direction(DOWN)
     {
     }
 
@@ -32,20 +33,12 @@ namespace pp {
         //dtor
     }
 
-    void PetitPoint::Init(const RessourcesRepo& resources)
+    bool PetitPoint::Init(const RessourcesRepo& resources)
     {
-        // Init the animations
-        m_tileset = &resources.getTileSet(PETITPOINT_TS);
-        m_frontIdle = m_tileset->getAnimation(0);
-        m_frontWalk = m_tileset->getAnimation(2);
-        m_backIdle = m_tileset->getAnimation(4);
-        m_backWalk = m_tileset->getAnimation(6);
-        m_rightIdle = m_tileset->getAnimation(8);
-        m_rightWalk = m_tileset->getAnimation(10);
-        m_leftIdle = m_tileset->getAnimation(12);
-        m_leftWalk = m_tileset->getAnimation(14);
-        m_currentAnimation = &m_frontIdle;
+        bool success = Personage::Init(resources, PETITPOINT_TS);
 
+        m_currentAnimation = &m_animations[FRONT_IDLE];
+        return success;
     }
     void PetitPoint::Update(LevelState& p_rLevelState,
                             const Uint8* p_KeyboardState)
@@ -55,48 +48,48 @@ namespace pp {
         if (p_KeyboardState[SDL_SCANCODE_UP]) {
             MovePetitPoint(p_rLevelState, 0, 0-toMove);
             m_direction = 0;
-            if (m_currentAnimation != &m_backWalk) {
-                m_currentAnimation = &m_backWalk;
+            if (m_currentAnimation != &m_animations[BACK_WALK]) {
+                m_currentAnimation = &m_animations[BACK_WALK];
                 m_currentAnimation->Reset();
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_DOWN]) {
             MovePetitPoint(p_rLevelState, 0, toMove);
             m_direction = 1;
-            if (m_currentAnimation != &m_frontWalk) {
-                m_currentAnimation = &m_frontWalk;
+            if (m_currentAnimation != &m_animations[FRONT_WALK]) {
+                m_currentAnimation = &m_animations[FRONT_WALK];
                 m_currentAnimation->Reset();
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_LEFT]) {
             MovePetitPoint(p_rLevelState, 0-toMove, 0);
             m_direction = LEFT;
-            if (m_currentAnimation != &m_leftWalk) {
-                m_currentAnimation = &m_leftWalk;
+            if (m_currentAnimation != &m_animations[LEFT_WALK]) {
+                m_currentAnimation = &m_animations[LEFT_WALK];
                 m_currentAnimation->Reset();
             }
         }
         else if (p_KeyboardState[SDL_SCANCODE_RIGHT]) {
             MovePetitPoint(p_rLevelState, toMove, 0);
             m_direction = RIGHT;
-            if (m_currentAnimation != &m_rightWalk) {
-                m_currentAnimation = &m_rightWalk;
+            if (m_currentAnimation != &m_animations[RIGHT_WALK]) {
+                m_currentAnimation = &m_animations[RIGHT_WALK];
                 m_currentAnimation->Reset();
             }
         }
         else {
             switch(m_direction) {
             case LEFT:
-                m_currentAnimation = &m_leftIdle;
+                m_currentAnimation = &m_animations[LEFT_IDLE];
                 break;
             case RIGHT:
-                m_currentAnimation = &m_rightIdle;
+                m_currentAnimation = &m_animations[RIGHT_IDLE];
                 break;
             case UP:
-                m_currentAnimation = &m_backIdle;
+                m_currentAnimation = &m_animations[BACK_IDLE];
                 break;
             case DOWN:
-                m_currentAnimation = &m_frontIdle;
+                m_currentAnimation = &m_animations[FRONT_IDLE];
                 break;
                 }
         }
@@ -107,15 +100,16 @@ namespace pp {
         Rectangle hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
+
         std::string warp;
         bool inWarp = currentRoom->inWarp(hb, warp);
-        
+
         while (p_dx != 0 || p_dy != 0) {
 			hb = getGroundHb();
 			int dx = 0;
 			int dy = 0;
-			
-			if (p_dx < 0) {
+
+            if (p_dx < 0) {
 				p_dx++;
 				dx--;
 			}

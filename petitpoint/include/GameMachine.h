@@ -3,11 +3,14 @@
 
 #include "LWindow.h"
 #include "GameState.h"
+#include "RessourcesRepo.h"
 #ifdef WIN32
 #include <SDL.h>
 #else
 #include <SDL2/SDL.h>
 #endif
+
+namespace pp {
 
 /***********************************************
 The game machine is the component that holds the
@@ -32,4 +35,7 @@ class GameMachine
         RessourcesRepo m_ressourceRepo;
 };
 
+}
+
 #endif // GAMEMACHINE_H
+

@@ -14,6 +14,8 @@ namespace {
     const int SCREEN_HEIGHT = 640;
 }
 
+namespace pp {
+
 GameMachine::GameMachine()
 : m_currentState(nullptr),
   m_Window(SCREEN_WIDTH, SCREEN_HEIGHT),
@@ -131,5 +133,7 @@ void GameMachine::Loop()
         }
 
     }
+
+}
 
 }

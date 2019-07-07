@@ -16,27 +16,17 @@ namespace pp {
     {
     public:
         static const int WALK_SPEED;
-        static const int IMAGE_SIZE;
 
         PetitPoint();
         virtual ~PetitPoint();
 
-        void Init(const RessourcesRepo& resources);
+        bool Init(const RessourcesRepo& resources);
         void Update(LevelState&, const Uint8*);
         void MovePetitPoint(LevelState&, int, int);
 
     private:
 
         int m_direction;
-        LAnimation m_frontIdle;
-        LAnimation m_frontWalk;
-        LAnimation m_backIdle;
-        LAnimation m_backWalk;
-        LAnimation m_leftIdle;
-        LAnimation m_leftWalk;
-        LAnimation m_rightIdle;
-        LAnimation m_rightWalk;
-
     };
 
 }

@@ -1,4 +1,5 @@
 #include "Utilities.h"
+#include <iostream>
 
 namespace pp {
 
@@ -10,4 +11,8 @@ namespace pp {
 				p_Rec2.m_y + p_Rec2.m_h < p_Rec1.m_y);
 	}
 
+    void Log(const std::string& p_string)
+    {
+        std::cout << p_string << std::endl;
+    }
 }

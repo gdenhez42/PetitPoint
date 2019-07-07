@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="64" tileheight="64" infinite="0" nextobjectid="25">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="64" tileheight="64" infinite="0" nextobjectid="26">
  <tileset firstgid="1" source="../tilesets/Manoir.tsx"/>
  <tileset firstgid="43" source="../tilesets/Lore.tsx"/>
  <tileset firstgid="59" source="../tilesets/Assassin.tsx"/>
+ <tileset firstgid="101" source="../tilesets/PetitLore.tsx"/>
  <layer name="Background" width="24" height="18">
   <data encoding="csv">
 4,1,1,1,1,1,1,1,1,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -27,7 +28,6 @@
  </layer>
  <objectgroup name="Personnages">
   <object id="1" type="enemy" gid="79" x="126" y="322" width="64" height="64"/>
-  <object id="5" type="pp" gid="48" x="314" y="1076" width="64" height="64"/>
   <object id="10" type="enemy" gid="72" x="374" y="374" width="64" height="64"/>
   <object id="11" type="enemy" gid="84" x="1066" y="720" width="64" height="64"/>
   <object id="12" type="enemy" gid="96" x="204" y="970" width="64" height="64"/>
@@ -37,6 +37,7 @@
   <object id="16" type="enemy" gid="92" x="452" y="248" width="64" height="64"/>
   <object id="17" type="enemy" gid="92" x="314" y="230" width="64" height="64"/>
   <object id="18" type="enemy" gid="92" x="76" y="544" width="64" height="64"/>
+  <object id="25" gid="101" x="352" y="1062" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="Warps">
   <object id="20" name="bibli_corr" type="load" x="712" y="637" width="46" height="29"/>

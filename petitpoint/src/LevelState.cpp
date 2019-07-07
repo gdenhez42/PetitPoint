@@ -3,8 +3,12 @@
 
 namespace {
     const std::string PERSONNAGE = "Personnages";
-    const std::string PETITPOINT = "Lore";
+    const std::string PETITPOINT = "PetitLore";
     const std::string ASSASSIN = "Assassin";
+
+    const std::string MANOIR_WC = "manoir_WC";
+    const std::string MANOIR_BIBLI = "manoir_bibli";
+    const std::string MANOIR_CORRIDOR = "manoir_corridor";
 }
 namespace pp {
 
@@ -26,13 +30,13 @@ namespace pp {
         m_pWindow = &p_pWindow;
 
         // Get the maps of this level
-        const TileMap& manoirWC = p_ressourceRepo.getMap("manoir_WC");
-        const TileMap& manoir_bibli = p_ressourceRepo.getMap("manoir_bibli");
-        const TileMap& manoir_corridor = p_ressourceRepo.getMap("manoir_corridor");
+        const tiled::TileMap& manoirWC = p_ressourceRepo.getMap(MANOIR_WC);
+        const tiled::TileMap& manoir_bibli = p_ressourceRepo.getMap(MANOIR_BIBLI);
+        const tiled::TileMap& manoir_corridor = p_ressourceRepo.getMap(MANOIR_CORRIDOR);
 
-        success = m_maps[manoirWC.GetName()].Init(p_pWindow, manoirWC);
-        success &= m_maps[manoir_bibli.GetName()].Init(p_pWindow, manoir_bibli);
-        success &= m_maps[manoir_corridor.GetName()].Init(p_pWindow, manoir_corridor);
+        success = m_maps[MANOIR_WC].Init(p_ressourceRepo, p_pWindow, MANOIR_WC, manoirWC);
+        success &= m_maps[MANOIR_BIBLI].Init(p_ressourceRepo, p_pWindow, MANOIR_BIBLI, manoir_bibli);
+        success &= m_maps[MANOIR_CORRIDOR].Init(p_ressourceRepo, p_pWindow, MANOIR_CORRIDOR, manoir_corridor);
 
         if (success) {
             success = initCharacters(p_ressourceRepo);
@@ -41,8 +45,8 @@ namespace pp {
             m_currentRoom = &m_maps[m_PetitPoint.getRoom()];
 
             // Make sure petitpoint is in the middle of the screen
-            m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - PetitPoint::IMAGE_SIZE/2,
-                                  m_pWindow->getHeight()/2 - m_PetitPoint.getY() - PetitPoint::IMAGE_SIZE/2);
+            m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth()/2,
+                                  m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight()/2);
 
             // Get warp list to move from one room to another
             std::map<std::string, LMap>::const_iterator it, itend = m_maps.end();
@@ -67,8 +71,8 @@ namespace pp {
         m_PetitPoint.Update(*this, keyboardState);
 
         // Make sure petitpoint is in the middle of the screen
-        m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - PetitPoint::IMAGE_SIZE/2,
-                              m_pWindow->getHeight()/2 - m_PetitPoint.getY() - PetitPoint::IMAGE_SIZE/2);
+        m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth(),
+                              m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight());
 
         return this;
     }
@@ -102,8 +106,8 @@ namespace pp {
         m_currentRoom->Update(m_pWindow->getWidth()/2 - middle_x,
                               m_pWindow->getHeight()/2 - middle_y);
         m_PetitPoint.Warp(m_currentRoom->getName(),
-                          middle_x - PetitPoint::IMAGE_SIZE/2,
-                          middle_y - PetitPoint::IMAGE_SIZE/2);
+                          middle_x - m_PetitPoint.getWidth(),
+                          middle_y - m_PetitPoint.getHeight());
 
     }
 
@@ -129,44 +133,52 @@ namespace pp {
     ********************************************************************/
     bool LevelState::initCharacters(const RessourcesRepo& p_ressourceRepo)
     {
+        bool success = true;
         bool foundPetitPoint = false;
 
         // Find the positions of the characters
-        std::map<std::string, LMap>::const_iterator it = m_maps.begin();
-        std::map<std::string, LMap>::const_iterator itend = m_maps.end();
-        for (; it != itend; ++it) {
-            const TileMap& room = p_ressourceRepo.getMap(it->second.getName());
-            const TileMap::ObjectGroup* pNode = nullptr;
-            bool havePerso = room.FindObjectGroup(PERSONNAGE, &pNode);
-            if (havePerso) {
-                const std::vector<TileMap::Object>& objects = pNode->m_objects;
-                std::vector<TileMap::Object>::const_iterator itend = objects.end();
-                for (std::vector<TileMap::Object>::const_iterator it = objects.begin(); it != itend; ++it) {
-                    int val = it->m_gid;
+        std::map<std::string, LMap>::const_iterator it1 = m_maps.begin();
+        std::map<std::string, LMap>::const_iterator itend1 = m_maps.end();
+        for (; it1 != itend1; ++it1) {
+            const std::string& roomName = it1->first;
+            const tiled::TileMap& room = p_ressourceRepo.getMap(it1->second.getName());
+            const tiled::ObjectGroup* pNode = nullptr;
+            std::map<std::string, tiled::ObjectGroup>::const_iterator objGr = room.m_objects.find(PERSONNAGE);
+            if (objGr != room.m_objects.end()) {
+
+                const std::vector<tiled::Object>& objects = objGr->second.m_objects;
+                std::vector<tiled::Object>::const_iterator itend2 = objects.end();
+                std::vector<tiled::Object>::const_iterator it2 = objects.begin();
+                for (; it2 != itend2; ++it2) {
+                    int val = it2->m_gid;
                     if (val > 0) {
-                        const TileMap::TilesetNode& ts = room.FindTileset(val);
-                        if (ts.m_tileSet.getName() == PETITPOINT) {
+                        const tiled::TilesetRef& tsr = room.FindTilesetRef(val);
+                        const tiled::TileSet& ts = p_ressourceRepo.getTileSet(RessourcesRepo::getRessourceName(tsr.m_source));
+                        if (ts.m_name == PETITPOINT) {
                             foundPetitPoint = true;
-                            m_PetitPoint.Warp(room.GetName(), it->m_x, it->m_y - it->m_h);
+                            m_PetitPoint.Warp(roomName, it2->m_x, it2->m_y - it2->m_h);
                         }
-                        else if (ts.m_tileSet.getName() == ASSASSIN) {
-                            m_enemies.push_back(Enemy(it->m_x, it->m_y - it->m_h, room.GetName()));
+                        else if (ts.m_name == ASSASSIN) {
+                            m_enemies.push_back(Enemy(it2->m_x, it2->m_y - it2->m_h, roomName));
                         }
 
                     }
+
                 }
             }
         }
 
+        success = foundPetitPoint;
+
         // Call init for every characters found
-        if (foundPetitPoint) {
-            m_PetitPoint.Init(p_ressourceRepo);
+        if (success) {
+            success = m_PetitPoint.Init(p_ressourceRepo);
             for (Enemy& enemy : m_enemies) {
-                enemy.Init(p_ressourceRepo);
+                success &= enemy.Init(p_ressourceRepo);
             }
         }
 
-        return foundPetitPoint;
+        return success;
     }
 
 }

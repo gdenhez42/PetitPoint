@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "LTexture.h"
 
+namespace pp {
 
 class TitleScreenState : public GameState
 {
@@ -21,5 +22,7 @@ class TitleScreenState : public GameState
         const LFont *m_pFont;
         const LTexture *m_pTextTexture;
 };
+
+}
 
 #endif // TITLESCREENSTATE_H

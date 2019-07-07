@@ -15,8 +15,10 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
-class LTexture
-{
+namespace pp {
+
+    class LTexture
+    {
     public:
         LTexture();
         virtual ~LTexture();
@@ -48,6 +50,7 @@ class LTexture
 
         //Deallocates texture
         void free();
-};
+    };
+}
 
 #endif // LTEXTURE_H

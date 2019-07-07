@@ -1,10 +1,9 @@
 /****************************************************************
 Utility classes to read tiled map (see https://www.mapeditor.org/)
-
 ****************************************************************/
 
-#ifndef TILESET_H
-#define TILESET_H
+#ifndef TILED_H
+#define TILED_H
 
 #include "LTexture.h"
 #include "LAnimation.h"
@@ -14,105 +13,79 @@ Utility classes to read tiled map (see https://www.mapeditor.org/)
 
 class RessourcesRepo;
 
-namespace pp
+namespace pp::tiled
 {
+    struct Object {
+        int m_id;
+        int m_gid;
+        int m_x;
+        int m_y;
+        int m_w;
+        int m_h;
+        std::string m_type;
+        std::string m_name;
+        std::map<std::string,std::string> m_properties;
+    };
 
-class TileSet
-{
-    public:
-        TileSet();
-        virtual ~TileSet();
+    struct ObjectGroup {
+        std::string m_name;
+        std::vector<Object> m_objects;
+    };
 
-        bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_filename);
-        const LAnimation& getAnimation(int id) const;
-        const std::string& getName() const { return m_name; }
-        const std::string& getType(int id) const;
+    struct Frame {
+        int m_tileId;
+    };
 
-    private:
+    struct Animation {
+        std::vector<Frame> m_frames;
+    };
+
+    struct Tile {
+        int m_id;
+        std::string m_type;
+        ObjectGroup m_objects;
+        Animation m_animation;
+    };
+
+    struct TilesetRef {
+        int m_firstGid;
+        std::string m_source;
+    };
+
+    struct Layer {
+        std::string m_name;
+        int m_width;
+        int m_height;
+        std::vector<std::vector<int> > m_data;
+    };
+
+    struct TileSet
+    {
+        bool Init(const std::string& p_filename);
+
         std::string m_name;
         int m_width;
         int m_height;
         int m_count;
         int m_columns;
-        const LTexture* m_image;
+        std::string m_image;
+        std::map<int, Tile> m_tiles;
+    };
 
-        std::map<int, LAnimation> m_animations;
-        std::map<int, std::string> m_types;
+    struct TileMap
+    {
+        bool Init(const std::string& p_filename);
+        const TilesetRef& FindTilesetRef(int p_Gid) const;
 
-        friend class TileMap;
-};
-
-class TileMap
-{
-    public:
-
-        // Tiled structures
-        struct TilesetNode {
-            int m_firstGid;
-            const TileSet& m_tileSet;
-            TilesetNode(int p_firstGid, const TileSet& p_tileSet);
-            const LTexture* GetTexture() const;
-        };
-
-        struct LayerNode {
-            int** m_tiles;
-            std::string m_name;
-            int m_width;
-            int m_heigth;
-            LayerNode(const std::string& name, int width, int heigth, const std::string& content);
-            LayerNode(const LayerNode&);
-            LayerNode(LayerNode&&);
-            ~LayerNode();
-            LayerNode& operator=(LayerNode);
-        };
-        struct Object {
-            int m_id;
-            int m_gid;
-            int m_x;
-            int m_y;
-            int m_w;
-            int m_h;
-            std::string m_type;
-            std::string m_name;
-            std::map<std::string,std::string> m_properties;
-        };
-
-        struct ObjectGroup {
-            std::string m_name;
-            std::vector<Object> m_objects;
-        };
-
-        TileMap();
-        TileMap(const TileMap&);
-        TileMap(TileMap&&);
-        virtual ~TileMap();
-        TileMap& operator=(TileMap);
-
-        int GetWidth() const { return m_width; }
-        int GetHeigth() const { return m_heigth; }
-        int GetTilewidth() const { return m_tilewidth; }
-        int GetTileheight() const { return m_tileheight; }
-        const std::string& GetName() const { return m_name; }
-
-        bool Init(const RessourcesRepo& p_ressourceRepo, const std::string& p_name);
-        bool FindLayerNode(const std::string& p_name, const LayerNode** p_ppLayer) const;
-        bool FindLayerNode(const std::string&, const LayerNode**, const TilesetNode**) const;
-        bool FindObjectGroup(const std::string&, const ObjectGroup**) const;
-        const TilesetNode& FindTileset(int gid) const;
-
-    private:
-
-        std::vector<TilesetNode> m_tilesets;
-        std::vector<LayerNode> m_layers;
-        std::vector<ObjectGroup> m_objects;
+        std::vector<TilesetRef> m_tilesets;
+        std::map<std::string, Layer> m_layers;
+        std::map<std::string, ObjectGroup> m_objects;
 
         int m_width;
         int m_heigth;
         int m_tilewidth;
         int m_tileheight;
-        std::string m_name;
-};
-
+    };
 }
 
-#endif // TILESET_H
+#endif // TILED_H

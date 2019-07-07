@@ -5,17 +5,19 @@
 #include "LAnimation.h"
 
 namespace pp {
-class Enemy : public Personage
-{
+    class RessourcesRepo;
+
+    class Enemy : public Personage
+    {
     public:
         Enemy(int x, int y, const std::string& room);
         virtual ~Enemy();
 
-        void Init(const RessourcesRepo& resources);
+        bool Init(const RessourcesRepo& p_Ressources);
 
     private:
         LAnimation m_frontIdle;
-};
+    };
 
 }
 

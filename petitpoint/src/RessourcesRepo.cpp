@@ -1,11 +1,12 @@
 #include "RessourcesRepo.h"
-#include <fstream>
+#include "Utilities.h"
 #include <Tiled.h>
-#include <assert.h>
 
 namespace
 {
 }
+
+namespace pp {
 
 RessourcesRepo::RessourcesRepo()
 {
@@ -39,22 +40,24 @@ bool RessourcesRepo::Load(const LWindow& window)
       success = m_images["Assassin"].loadFromFile(window, "resources/images/Assassin.png");
       success &= m_images["Lore"].loadFromFile(window, "resources/images/Lore.png");
       success &= m_images["Manoir"].loadFromFile(window, "resources/images/Manoir.png");
+      success &= m_images["PetitLore"].loadFromFile(window, "resources/images/PetitLore.png");
     }
 
     // Tilesets to load
     if (success)
     {
-        success = m_tileSets["Assassin"].Init(*this, "resources/tilesets/Assassin.tsx");
-        success &= m_tileSets["Lore"].Init(*this, "resources/tilesets/Lore.tsx");
-        success &= m_tileSets["Manoir"].Init(*this, "resources/tilesets/Manoir.tsx");
+        success = m_tileSets["Assassin"].Init("resources/tilesets/Assassin.tsx");
+        success &= m_tileSets["Lore"].Init("resources/tilesets/Lore.tsx");
+        success &= m_tileSets["Manoir"].Init("resources/tilesets/Manoir.tsx");
+        success &= m_tileSets["PetitLore"].Init("resources/tilesets/PetitLore.tsx");
     }
 
     // Manoir rooms
     if (success)
     {
-        success = m_maps["manoir_WC"].Init(*this, "resources/tilemaps/manoir_WC.tmx");
-        success &= m_maps["manoir_bibli"].Init(*this, "resources/tilemaps/manoir_bibli.tmx");
-        success &= m_maps["manoir_corridor"].Init(*this, "resources/tilemaps/manoir_corridor.tmx");
+        success = m_maps["manoir_WC"].Init("resources/tilemaps/manoir_WC.tmx");
+        success &= m_maps["manoir_bibli"].Init("resources/tilemaps/manoir_bibli.tmx");
+        success &= m_maps["manoir_corridor"].Init("resources/tilemaps/manoir_corridor.tmx");
     }
 
     return success;
@@ -67,21 +70,30 @@ void RessourcesRepo::Free()
 const LTexture& RessourcesRepo::getImage(const std::string& p_texture) const
 {
   std::map<std::string, LTexture>::const_iterator it = m_images.find(p_texture);
-  assert(it != m_images.end());
+  if (it == m_images.end()) {
+      Log("Could not find image: " + p_texture);
+      exit(-1);
+  }
   return it->second;
 }
 
-const pp::TileMap& RessourcesRepo::getMap(const std::string& p_name) const
+const tiled::TileMap& RessourcesRepo::getMap(const std::string& p_name) const
 {
-    std::map<std::string, pp::TileMap>::const_iterator it = m_maps.find(p_name);
-    assert(it != m_maps.end());
+    std::map<std::string, tiled::TileMap>::const_iterator it = m_maps.find(p_name);
+    if (it == m_maps.end()) {
+        Log("Could not find map: " + p_name);
+        exit(-1);
+    }
     return it->second;
 }
 
-const pp::TileSet& RessourcesRepo::getTileSet(const std::string& p_name) const
+const tiled::TileSet& RessourcesRepo::getTileSet(const std::string& p_name) const
 {
-    std::map<std::string, pp::TileSet>::const_iterator it = m_tileSets.find(p_name);
-    assert(it != m_tileSets.end());
+    std::map<std::string, tiled::TileSet>::const_iterator it = m_tileSets.find(p_name);
+    if (it == m_tileSets.end()) {
+        Log("Could not find tileSet: " + p_name);
+        exit(-1);
+    }
     return it->second;
 }
 
@@ -94,3 +106,4 @@ std::string RessourcesRepo::getRessourceName(const std::string& p_resourcePath)
   return p_resourcePath.substr(lastSlash + 1, len);
 }
 
+}
