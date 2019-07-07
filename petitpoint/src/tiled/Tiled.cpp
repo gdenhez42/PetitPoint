@@ -5,7 +5,6 @@
 namespace {
 
     const char* NUMBERS = "0123456789";
-    const char* ANIMATION = "animation";
     const char* TILEID = "tileid";
     const char* TYPE = "type";
     const char* SOURCE = "source";
@@ -26,6 +25,7 @@ namespace {
     const std::string OBJECT_GROUP = "objectgroup";
     const std::string TILESET = "tileset";
     const std::string LAYER = "layer";
+    const std::string ANIMATION = "animation";
     const std::string EMPTY = "";
 
     std::string GetStringAttribute(tinyxml2::XMLElement* p_elem,
