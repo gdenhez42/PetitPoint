@@ -67,7 +67,7 @@
    <object id="1" x="6" y="23" width="20" height="8"/>
   </objectgroup>
  </tile>
- <tile id="9">
+ <tile id="9" type="left_idle">
   <objectgroup draworder="index">
    <object id="1" x="6" y="23" width="20" height="8"/>
   </objectgroup>
@@ -75,7 +75,7 @@
    <frame tileid="9" duration="100"/>
   </animation>
  </tile>
- <tile id="10">
+ <tile id="10" type="left_walk">
   <objectgroup draworder="index">
    <object id="1" x="6" y="23" width="20" height="8"/>
   </objectgroup>

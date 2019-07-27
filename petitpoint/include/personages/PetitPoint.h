@@ -5,6 +5,7 @@
 #include "Personage.h"
 #include "LAnimation.h"
 #include "Utilities.h"
+#include "Commands.h"
 
 class RessourcesRepo;
 
@@ -21,7 +22,7 @@ namespace pp {
         virtual ~PetitPoint();
 
         bool Init(const RessourcesRepo& resources);
-        void Update(LevelState&, const Uint8*);
+        void Update(LevelState&, const Commands& p_command);
         void MovePetitPoint(LevelState&, int, int);
 
     private:

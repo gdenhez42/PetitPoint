@@ -14,6 +14,8 @@ if (${WIN32})
     "e:/vc_dev_libs/SDL2_ttf-2.0.15/include"
     include
     include/tiled
+    include/personages
+    include/gamestates
     ../external/tinyxml2)
 
 else()
@@ -21,6 +23,7 @@ else()
   include_directories(include
     include/tiled
     include/personages
+    include/gamestates
     ../external/tinyxml2)
 
 endif()
@@ -30,17 +33,19 @@ add_library(PetitPointLib STATIC
   src/personages/Enemy.cpp
   src/personages/Personage.cpp
   src/personages/PetitPoint.cpp
+  src/gamestates/LevelState.cpp
+  src/gamestates/GameState.cpp
+  src/gamestates/TitleScreenState.cpp
+  src/gamestates/InventoryState.cpp
+  src/Commands.cpp
   src/GameMachine.cpp
-  src/GameState.cpp
   src/LAnimation.cpp
-  src/LevelState.cpp
   src/LFont.cpp
   src/LMap.cpp
   src/LTexture.cpp
   src/LWindow.cpp
   src/Manoir.cpp
   src/RessourcesRepo.cpp
-  src/TitleScreenState.cpp
   src/Utilities.cpp)
 
 add_executable(PetitPoint src/main.cpp)

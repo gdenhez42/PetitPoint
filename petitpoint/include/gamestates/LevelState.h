@@ -29,7 +29,7 @@ namespace pp {
         ~LevelState();
 
         bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
-        GameState* Update(const SDL_Event& e, const Uint8*);
+        std::tuple<bool, GameState*> Update(const Commands& p_command);
         void Render();
         const LMap* getCurrentRoom() const {return m_currentRoom;}
         LMap* getCurrentRoom() {return m_currentRoom;}
@@ -47,6 +47,7 @@ namespace pp {
         PetitPoint m_PetitPoint;
 
         const LWindow* m_pWindow;
+        const RessourcesRepo* m_pRessourceRepo;
     };
 
 }

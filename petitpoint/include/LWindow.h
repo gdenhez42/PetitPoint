@@ -9,8 +9,10 @@
 #include <SDL2/SDL.h>
 #endif
 
-class LWindow
-{
+namespace pp {
+
+    class LWindow
+    {
     public:
         LWindow(int p_w, int p_h);
         virtual ~LWindow();
@@ -24,8 +26,8 @@ class LWindow
         void Clear();
         void Refresh();
 
-		// Some debugging utilities
-		void RenderRec(const pp::Rectangle&) const;
+        // Some debugging utilities
+        void RenderRec(const pp::Rectangle&) const;
 
     private:
         void Free();
@@ -38,6 +40,8 @@ class LWindow
 
         //The window renderer
         SDL_Renderer* m_pRenderer;
-};
+    };
+
+}
 
 #endif // LWINDOW_H

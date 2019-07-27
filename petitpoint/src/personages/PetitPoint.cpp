@@ -41,11 +41,13 @@ namespace pp {
         return success;
     }
     void PetitPoint::Update(LevelState& p_rLevelState,
-                            const Uint8* p_KeyboardState)
+                            const Commands& p_command)
     {
 		int toMove = WALK_SPEED;
 
-        if (p_KeyboardState[SDL_SCANCODE_UP]) {
+        const Uint8* keyboardState = p_command.GetKeyboardState();
+
+        if (keyboardState[Commands::WALK_UP]) {
             MovePetitPoint(p_rLevelState, 0, 0-toMove);
             m_direction = 0;
             if (m_currentAnimation != &m_animations[BACK_WALK]) {
@@ -53,7 +55,7 @@ namespace pp {
                 m_currentAnimation->Reset();
             }
         }
-        else if (p_KeyboardState[SDL_SCANCODE_DOWN]) {
+        else if (keyboardState[Commands::WALK_DOWN]) {
             MovePetitPoint(p_rLevelState, 0, toMove);
             m_direction = 1;
             if (m_currentAnimation != &m_animations[FRONT_WALK]) {
@@ -61,7 +63,7 @@ namespace pp {
                 m_currentAnimation->Reset();
             }
         }
-        else if (p_KeyboardState[SDL_SCANCODE_LEFT]) {
+        else if (keyboardState[Commands::WALK_LEFT]) {
             MovePetitPoint(p_rLevelState, 0-toMove, 0);
             m_direction = LEFT;
             if (m_currentAnimation != &m_animations[LEFT_WALK]) {
@@ -69,7 +71,7 @@ namespace pp {
                 m_currentAnimation->Reset();
             }
         }
-        else if (p_KeyboardState[SDL_SCANCODE_RIGHT]) {
+        else if (keyboardState[Commands::WALK_RIGHT]) {
             MovePetitPoint(p_rLevelState, toMove, 0);
             m_direction = RIGHT;
             if (m_currentAnimation != &m_animations[RIGHT_WALK]) {
@@ -99,7 +101,6 @@ namespace pp {
     {
         Rectangle hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
-
 
         std::string warp;
         bool inWarp = currentRoom->inWarp(hb, warp);

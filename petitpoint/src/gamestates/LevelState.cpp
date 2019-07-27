@@ -1,5 +1,8 @@
 #include "LevelState.h"
+#include "InventoryState.h"
 #include "LMap.h"
+#include "RessourcesRepo.h"
+#include "LWindow.h"
 
 namespace {
     const std::string PERSONNAGE = "Personnages";
@@ -65,16 +68,24 @@ namespace pp {
     /*********************************************************************
      Update elements in the level
     ********************************************************************/
-    GameState* LevelState::Update(const SDL_Event& e, const Uint8* keyboardState)
+    std::tuple<bool,GameState*> LevelState::Update(const Commands& p_command)
     {
+        // Check menuing
+        switch(p_command.GetEvent()) {
+        case Commands::PP_EVENT_SELECT:
+            GameState* newState = new InventoryState(this);
+            bool result = newState->Init(*m_pWindow, *m_pRessourceRepo);
+            return std::make_tuple(result, newState);
+        }
+
         // Update petitpoint
-        m_PetitPoint.Update(*this, keyboardState);
+        m_PetitPoint.Update(*this, p_command);
 
         // Make sure petitpoint is in the middle of the screen
         m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth(),
                               m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight());
 
-        return this;
+        return std::make_tuple(true, this);
     }
 
     /*********************************************************************

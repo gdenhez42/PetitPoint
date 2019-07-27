@@ -1,6 +1,9 @@
 #include "GameMachine.h"
+#include "GameState.h"
 #include "TitleScreenState.h"
 #include "LevelState.h"
+#include "RessourcesRepo.h"
+#include "Utilities.h"
 
 #ifdef WIN32
 #include <SDL_image.h>
@@ -27,8 +30,7 @@ GameMachine::GameMachine()
 GameMachine::~GameMachine()
 {
     //dtor
-    if (m_currentState != nullptr)
-    {
+    if (m_currentState != nullptr) {
         delete m_currentState;
     }
 
@@ -40,19 +42,18 @@ bool GameMachine::Init()
 {
     //Initialization flag
     bool success = true;
+
     //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+    if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+        Log(std::string("SDL could not initialize! SDL_Error: ") + SDL_GetError());
         success = false;
     }
 
     //Set texture filtering to linear
-    if (success)
-    {
+    if (success) {
         if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
         {
-            printf( "Warning: Linear texture filtering not enabled!" );
+            Log(std::string("Warning: Linear texture filtering not enabled!"));
         }
     }
 
@@ -62,32 +63,31 @@ bool GameMachine::Init()
         int imgFlags = IMG_INIT_PNG;
         if(!(IMG_Init(imgFlags) & imgFlags))
         {
-            printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+            Log(std::string("SDL_image could not initialize! SDL_image Error: ") + IMG_GetError());
             success = false;
         }
     }
 
     //Initialize SDL_ttf
-    if (success)
-    {
+    if (success) {
         if( TTF_Init() == -1 )
         {
-            printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+            Log(std::string("SDL_ttf could not initialize! SDL_ttf Error: ") + TTF_GetError());
             success = false;
         }
     }
 
-    if (success)
-    {
+    if (success) {
         success = m_Window.Load();
     }
 
-    if (success)
-    {
+    if (success) {
         success = m_ressourceRepo.Load(m_Window);
     }
 
-    m_keyboardState = SDL_GetKeyboardState(NULL);
+    if (success) {
+        success = m_command.Init();
+    }
 
     return success;
 }
@@ -95,34 +95,23 @@ bool GameMachine::Init()
 void GameMachine::Loop()
 {
     m_currentState = new TitleScreenState();
+
     // quit event
     bool quit = !m_currentState->Init(m_Window, m_ressourceRepo);
-    // event_handler
-    SDL_Event e;
 
-    while (!quit)
-    {
-        //Handle events on queue
-        while( SDL_PollEvent( &e ) != 0 )
-        {
-            //User requests quit
-            if( e.type == SDL_QUIT )
-            {
-                quit = true;
-            }
-        }
+    while (!quit) {
+
+        m_command.Update();
+        quit = m_command.GetEvent() == Commands::PP_EVENT_QUIT;
 
         if (!quit)
         {
             //Clear screen
             m_Window.Clear();
 
-            GameState* newState = m_currentState->Update(e, m_keyboardState);
-            if (newState != m_currentState)
-            {
-                quit = !newState->Init(m_Window, m_ressourceRepo);
-                m_currentState = newState;
-            }
+            std::tuple<bool, GameState*> result = m_currentState->Update(m_command);
+            quit = !std::get<0>(result);
+            m_currentState = std::get<1>(result);
         }
 
         if (!quit)

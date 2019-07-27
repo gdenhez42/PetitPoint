@@ -12,8 +12,8 @@ class TitleScreenState : public GameState
         TitleScreenState();
         virtual ~TitleScreenState();
 
-        bool Init(const LWindow& p_pWindow, const RessourcesRepo& p_ressourceRepo);
-        GameState* Update(const SDL_Event& e, const Uint8*);
+        bool Init(const LWindow& p_window, const RessourcesRepo& p_ressourceRepo);
+        std::tuple<bool, GameState*> Update(const Commands& p_command);
         void Render();
 
     private:
@@ -21,6 +21,8 @@ class TitleScreenState : public GameState
         int m_wh;
         const LFont *m_pFont;
         const LTexture *m_pTextTexture;
+        const LWindow *m_pWindow;
+        const RessourcesRepo *m_pRessourceRepo;
 };
 
 }
