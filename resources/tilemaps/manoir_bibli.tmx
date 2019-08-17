@@ -16,6 +16,7 @@
   <object id="1" type="warp" x="320" y="384" width="64" height="64">
    <properties>
     <property name="H" type="int" value="64"/>
+    <property name="W" type="int" value="64"/>
     <property name="X" value="704"/>
     <property name="Y" value="640"/>
     <property name="dest" value="manoir_corridor"/>
