@@ -51,15 +51,6 @@ namespace pp {
             m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth()/2,
                                   m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight()/2);
 
-            // Get warp list to move from one room to another
-            std::map<std::string, LMap>::const_iterator it, itend = m_maps.end();
-            for(it = m_maps.begin(); it != itend; ++it) {
-                const std::vector<std::string>& warps = it->second.getLoads();
-                std::vector<std::string>::const_iterator it2, it2end = warps.end();
-                for (it2 = warps.begin(); it2 != it2end; ++it2) {
-                    m_loads[*it2] = it->first;
-                }
-            }
         }
 
         return success;
@@ -105,14 +96,13 @@ namespace pp {
 		m_pWindow->RenderRec(hb);
     }
 
-    void LevelState::Warp(const std::string& p_warp)
+    void LevelState::Warp(const WarpZone& p_warp)
     {
-        const std::string& nextMap = m_loads[p_warp];
+        std::string nextMap = p_warp.m_load.m_room;
         m_currentRoom = &m_maps[nextMap];
 
-        const LMap::Zone& zone = m_currentRoom->getLoad(p_warp);
-        int middle_x = zone.m_rec.m_x + zone.m_rec.m_w/2;
-        int middle_y = zone.m_rec.m_y + zone.m_rec.m_h/2;
+        int middle_x = p_warp.m_load.m_rect.m_x + p_warp.m_load.m_rect.m_w/2;
+        int middle_y = p_warp.m_load.m_rect.m_y + p_warp.m_load.m_rect.m_h/2;
 
         m_currentRoom->Update(m_pWindow->getWidth()/2 - middle_x,
                               m_pWindow->getHeight()/2 - middle_y);

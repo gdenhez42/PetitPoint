@@ -3,6 +3,7 @@
 #include "Tiled.h"
 #include "LevelState.h"
 #include "LMap.h"
+#include "Utilities.h"
 
 namespace {
     const std::string PETITPOINT_TS = "PetitLore";
@@ -102,8 +103,8 @@ namespace pp {
         Rectangle hb = getGroundHb();
         LMap* currentRoom = p_rLevelState.getCurrentRoom();
 
-        std::string warp;
-        bool inWarp = currentRoom->inWarp(hb, warp);
+        WarpZone warp;
+        bool inWarp = currentRoom->getWarp(hb, warp);
 
         while (p_dx != 0 || p_dy != 0) {
 			hb = getGroundHb();
@@ -129,27 +130,17 @@ namespace pp {
 
 			Rectangle test(hb.m_x + dx, hb.m_y + dy, hb.m_w, hb.m_h);
 
-            if (currentRoom->isBlocked(test))
+            if (!inWarp && currentRoom->getWarp(test, warp)) {
+                p_dx = 0; p_dy = 0;
+                p_rLevelState.Warp(warp);
+            }
+            else if (currentRoom->isBlocked(test))
             {
-				if (dy != 0) {
-					int align = currentRoom->AlignH(test);
-					if (align != 0) {
-						Move(align, dy);
-					}
-				}
-				else {
-					p_dx = 0; p_dy = 0;
-				}
-
+                p_dx = 0; p_dy = 0;
             }
 			else if (p_rLevelState.CheckCollisions(test)) {
 				p_dx = 0; p_dy = 0;
 			}
-            else if (!inWarp && currentRoom->inWarp(test, warp))
-            {
-				p_dx = 0; p_dy = 0;
-				p_rLevelState.Warp(warp);
-            }
             else
             {
 				Move(dx, dy);

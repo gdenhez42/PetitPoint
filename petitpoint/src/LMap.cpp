@@ -1,6 +1,7 @@
 #include "Tiled.h"
 #include "RessourcesRepo.h"
 #include "LMap.h"
+#include <cstdlib>
 
 namespace {
     const char* BACKGROUND = "Background";
@@ -9,6 +10,11 @@ namespace {
     const char* WARP = "warp";
     const char* LOAD = "load";
     const char* WALL_TILE = "wall";
+    const std::string X = "X";
+    const std::string Y = "Y";
+    const std::string H = "H";
+    const std::string W = "W";
+    const std::string DEST = "dest";
 	const int ALIGN_THRESHOLD = 3;
 }
 
@@ -48,13 +54,11 @@ namespace pp
         m_tileheight = tilemap.m_tileheight;
         m_tilewidth = tilemap.m_tilewidth;
 
-        // Find background and walls tileset
+        // Find background layer
         const std::map<std::string, tiled::Layer>::const_iterator itrBackgroundLayer = tilemap.m_layers.find(BACKGROUND);
-        const std::map<std::string, tiled::ObjectGroup>::const_iterator itrWarps = tilemap.m_objects.find(WARPS);
 
         if (success) {
             success = itrBackgroundLayer != tilemap.m_layers.end();
-            success &= itrWarps != tilemap.m_objects.end();
         }
 
         // Initialize tiles of map
@@ -92,14 +96,39 @@ namespace pp
                     }
                 }
             }
+        }
 
-            // Initialize the warps in the map
-            for (const tiled::Object& obj : itrWarps->second.m_objects) {
-                Zone warp(obj.m_x, obj.m_y, obj.m_w, obj.m_h, obj.m_name);
-                if (obj.m_type == LOAD) {
-                    m_loads.insert(std::make_pair(warp.m_name, warp));
-                } else if (obj.m_type == WARP) {
-                    m_warps.insert(std::make_pair(warp.m_name, warp));
+        // Initialize warps
+        if (success) {
+            const std::map<std::string, tiled::ObjectGroup>::const_iterator itrWarps = tilemap.m_objects.find(WARPS);
+            if (itrWarps != tilemap.m_objects.end()) {
+
+                for (const tiled::Object& object : itrWarps->second.m_objects) {
+                    std::map<std::string,std::string>::const_iterator itrLoadX = object.m_properties.find(X);
+                    std::map<std::string,std::string>::const_iterator itrLoadY = object.m_properties.find(Y);
+                    std::map<std::string,std::string>::const_iterator itrLoadW = object.m_properties.find(W);
+                    std::map<std::string,std::string>::const_iterator itrLoadH = object.m_properties.find(H);
+                    std::map<std::string,std::string>::const_iterator itrLoadDest = object.m_properties.find(DEST);
+                    std::map<std::string,std::string>::const_iterator itrPropsEnd = object.m_properties.end();
+
+                    if (itrLoadX != itrPropsEnd &&
+                        itrLoadY != itrPropsEnd &&
+                        itrLoadW != itrPropsEnd &&
+                        itrLoadH != itrPropsEnd &&
+                        itrLoadDest != itrPropsEnd) {
+
+                        LoadZone load;
+
+                        load.m_rect = Rectangle(atoi(object.m_properties.at(X).c_str()),
+                                                atoi(object.m_properties.at(Y).c_str()),
+                                                atoi(object.m_properties.at(H).c_str()),
+                                                atoi(object.m_properties.at(W).c_str()));
+                        load.m_room = object.m_properties.at(DEST);
+                        WarpZone warp;
+                        warp.m_rect = Rectangle(object.m_x, object.m_y, object.m_h, object.m_w);
+                        warp.m_load = load;
+                        m_warps.push_back(warp);
+                    }
                 }
             }
         }
@@ -137,25 +166,6 @@ namespace pp
         m_y = y;
     }
 
-    void LMap::Update(const std::string& p_load)
-    {
-        const Zone& load = m_loads.find(p_load)->second;
-        int middle_x = load.m_rec.m_x + load.m_rec.m_w/2;
-        int middle_y = load.m_rec.m_y + load.m_rec.m_h/2;
-        m_x = m_pWindow->getWidth()/2 - middle_x;
-        m_y = m_pWindow->getHeight()/2 - middle_y;
-    }
-
-    std::vector<std::string> LMap::getLoads() const
-    {
-        std::vector<std::string> warps;
-        std::map<std::string, Zone>::const_iterator it, itend = m_loads.end();
-        for(it = m_loads.begin(); it != itend; ++it) {
-            warps.push_back(it->first);
-        }
-        return warps;
-    }
-
     bool LMap::isBlocked(const Rectangle& p_Rec) const
     {
         bool blocked = (p_Rec.m_x < 0 || p_Rec.m_x + p_Rec.m_w >= m_width*m_tilewidth ||
@@ -180,41 +190,17 @@ namespace pp
       Check if the rectangle is in the warp. Set the p_rWarp parameter
       if it is.
     *******************************************************************/
-    bool LMap::inWarp(const Rectangle& p_Rec, std::string& p_rWarp) const
+    bool LMap::getWarp(const Rectangle& p_Rec, WarpZone& p_rWarp) const
     {
         bool inWarp = false;
-        std::map<std::string, Zone>::const_iterator it, itend = m_warps.end();
+        std::vector<WarpZone>::const_iterator it, itend = m_warps.end();
         for (it = m_warps.begin(); it != itend && !inWarp; ++it) {
-            const Zone& warp = it->second;
-            inWarp = AreColliding(p_Rec, warp.m_rec);
-            p_rWarp = warp.m_name;
+            inWarp = AreColliding(p_Rec, it->m_rect);
+            p_rWarp = *it;
         }
 
         return inWarp;
     }
 
-    /*********************************************************************
-      Return the number of pixel a rectangle can move to not be blocked
-      horizontally. Up to 3 pixels in absolute value.
-    **********************************************************************/
-    int LMap::AlignH(const Rectangle& p_Rec) const {
-    
-        int nbPixelLeft = m_tilewidth - p_Rec.m_x % m_tilewidth + 1;
-        int nbPixelRight = (p_Rec.m_x + p_Rec.m_w) % m_tilewidth;
-
-        if (nbPixelLeft <= ALIGN_THRESHOLD && 
-            !isBlocked(Rectangle(p_Rec.m_x + nbPixelLeft, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
-            {
-                return nbPixelLeft;
-            }
-
-        if (nbPixelRight <= ALIGN_THRESHOLD &&
-            !isBlocked(Rectangle(p_Rec.m_x - nbPixelRight, p_Rec.m_y, p_Rec.m_w, p_Rec.m_h)))
-            {
-                return 0-nbPixelRight;
-            }
-
-        return 0;
-    }
 }
 

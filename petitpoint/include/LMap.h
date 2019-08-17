@@ -4,7 +4,7 @@
 #include "Tiled.h"
 #include "Utilities.h"
 #include <string>
-#include <map>
+#include <vector>
 
 #ifdef WIN32
 #include <SDL.h>
@@ -30,13 +30,6 @@ namespace pp
         Tile() : m_rect(), m_blocked(true), m_texture(nullptr) {}
         };
 
-        struct Zone {
-            Rectangle m_rec;
-            std::string m_name;
-        Zone(int p_x, int p_y, int p_w, int p_h, const std::string& p_name)
-        : m_rec(p_x, p_y, p_w, p_h), m_name(p_name) {}
-        };
-
         LMap();
         virtual ~LMap();
 
@@ -45,9 +38,7 @@ namespace pp
         int getY() const {return m_y;}
         const std::string& getName() const {return m_name;}
         bool isBlocked(const Rectangle&) const;
-        bool inWarp(const Rectangle&, std::string&) const;
-        std::vector<std::string> getLoads() const;
-        const Zone& getLoad(const std::string& p_load) const { return m_loads.at(p_load); }
+        bool getWarp(const Rectangle&, WarpZone& p_rWarp) const;
 
         // Rendering loop
         bool Init(const RessourcesRepo& p_ressourceRepo,
@@ -56,11 +47,6 @@ namespace pp
                   const tiled::TileMap& tilemap);
         void Render() const;
         void Update(int x, int y);
-        void Update(const std::string&);
-
-        // Utilities to make things more user friendly
-        int AlignH(const Rectangle&) const;
-        bool AlignV(Rectangle&) const;
 
     private:
 
@@ -73,8 +59,7 @@ namespace pp
         int m_heigth;
         int m_tilewidth;
         int m_tileheight;
-        std::map<std::string, Zone> m_warps;
-        std::map<std::string, Zone> m_loads;
+        std::vector<WarpZone> m_warps;
 
         const LWindow* m_pWindow;
         Tile** m_tiles;

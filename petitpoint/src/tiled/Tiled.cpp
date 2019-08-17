@@ -18,6 +18,7 @@ namespace {
     const char* TILE_WIDTH = "tilewidth";
     const char* TILE_HEIGHT = "tileheight";
     const char* FIRST_GID = "firstgid";
+    const char* VALUE = "value";
     const std::string TILE = "tile";
     const std::string IMAGE = "image";
     const std::string FRAME = "frame";
@@ -33,6 +34,21 @@ namespace {
     {
         const char* attrVal = p_elem->Attribute(p_attr);
         return attrVal != nullptr ? std::string(attrVal) : EMPTY;
+    }
+
+    void ReadObjectProperties(tinyxml2::XMLElement* p_elem,
+                              pp::tiled::Object& p_rObj)
+    {
+        tinyxml2::XMLElement* properties = p_elem->FirstChildElement();
+        if (properties != nullptr) {
+            tinyxml2::XMLElement* property = properties->FirstChildElement();
+            while (property != nullptr) {
+                std::string name = GetStringAttribute(property, NAME);
+                std::string value = GetStringAttribute(property, VALUE);
+                p_rObj.m_properties[name] = value;
+                property = property->NextSiblingElement();
+            }
+        }
     }
 
     void ReadObjectGroupElement(tinyxml2::XMLElement* p_pObjGr,
@@ -52,6 +68,7 @@ namespace {
                 obj.m_h = elem->IntAttribute(HEIGHT);
                 obj.m_type = GetStringAttribute(p_pObjGr, NAME);
                 obj.m_name = GetStringAttribute(p_pObjGr, TYPE);
+                ReadObjectProperties(elem, obj);
                 p_rObjGr.m_objects.push_back(obj);
             }
             elem = elem->NextSiblingElement();

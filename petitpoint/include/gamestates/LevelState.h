@@ -20,6 +20,7 @@ class RessourcesRepo;
 namespace pp {
 
     class LMap;
+    class Warp;
     class Enemy;
 
     class LevelState : public GameState
@@ -34,14 +35,13 @@ namespace pp {
         const LMap* getCurrentRoom() const {return m_currentRoom;}
         LMap* getCurrentRoom() {return m_currentRoom;}
         bool CheckCollisions(const Rectangle&) const;
-        void Warp(const std::string&);
+        void Warp(const WarpZone& p_Warp);
 
     private:
 
         bool initCharacters(const RessourcesRepo&);
 
         std::map<std::string, LMap> m_maps;
-        std::map<std::string, std::string> m_loads;
         std::vector<Enemy> m_enemies;
         LMap* m_currentRoom;
         PetitPoint m_PetitPoint;
