@@ -6,6 +6,7 @@
 #include "Tiled.h"
 #include "Enemy.h"
 #include "GameState.h"
+#include "LifeBar.h"
 #include <vector>
 
 #ifdef WIN32
@@ -41,11 +42,18 @@ namespace pp {
 
         bool initCharacters(const RessourcesRepo&);
 
+        // Rooms in the level
         std::map<std::string, LMap> m_maps;
-        std::vector<Enemy> m_enemies;
         LMap* m_currentRoom;
-        PetitPoint m_PetitPoint;
 
+        // Personage in the level
+        PetitPoint m_PetitPoint;
+        std::vector<Enemy> m_enemies;
+
+        // Decor element
+        LifeBar m_lifeBar;
+
+        // Rendering utilities
         const LWindow* m_pWindow;
         const RessourcesRepo* m_pRessourceRepo;
     };

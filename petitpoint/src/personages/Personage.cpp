@@ -12,10 +12,12 @@ namespace {
 
 namespace pp {
 
-    Personage::Personage(int x, int y, const std::string& room)
+    Personage::Personage(int x, int y, const std::string& room, int hp)
         : m_room(room),
           m_x(x),
           m_y(y),
+          m_hp(hp),
+          m_maxHp(hp),
           m_groundHb(0,0,0,0),
           m_animations(),
           m_currentAnimation(nullptr)
@@ -100,5 +102,17 @@ namespace pp {
 	Rectangle Personage::getGroundHb() const {
 		return Rectangle(getX() + m_groundHb.m_x, getY() + m_groundHb.m_y, m_groundHb.m_w, m_groundHb.m_h);
 	}
+
+    void Personage::GiveDamage(int damage)
+    {
+        if (m_hp < damage) m_hp = 0;
+        else m_hp -= damage;
+    }
+
+    void Personage::Heal(int hp)
+    {
+        if (hp + m_hp > m_maxHp) m_hp = m_maxHp;
+        else m_hp += hp;
+    }
 
 }

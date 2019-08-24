@@ -21,7 +21,7 @@ namespace pp {
     {
     public:
 
-        Personage(int, int, const std::string&);
+        Personage(int, int, const std::string&, int hp);
         virtual ~Personage();
 
         int getX() const {return m_x;}
@@ -29,6 +29,8 @@ namespace pp {
         int getWidth() const {return m_width;}
         int getHeight() const {return m_height;}
         const std::string& getRoom() const {return m_room;}
+        int getHP() const {return m_hp;}
+        int getMaxHP() const {return m_maxHp;}
 		Rectangle getGroundHb() const;
         void SetPos(int x, int y) { m_x = x; m_y = y; }
         void Move(int dx, int dy) { m_x += dx; m_y += dy; }
@@ -38,6 +40,9 @@ namespace pp {
         bool Init(const RessourcesRepo& p_RessourceRepo,
                   const std::string& p_tilesetName);
         void Render(const LevelState& p_LevelState);
+
+        void GiveDamage(int damage);
+        void Heal(int hp);
 
     protected:
 
@@ -49,6 +54,9 @@ namespace pp {
         int m_width;
         int m_height;
 
+        // La points de vie du personnage
+        int m_hp;
+        int m_maxHp;
 
         // La hitbox pour les collisions contre les murs
         Rectangle m_groundHb;

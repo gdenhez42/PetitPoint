@@ -50,7 +50,10 @@ namespace pp {
             // Make sure petitpoint is in the middle of the screen
             m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth()/2,
                                   m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight()/2);
+        }
 
+        if (success) {
+            m_lifeBar.Init(&m_PetitPoint, m_pWindow);
         }
 
         return success;
@@ -90,10 +93,7 @@ namespace pp {
         }
         m_PetitPoint.Render(*this);
 
-		Rectangle hb = m_PetitPoint.getGroundHb();
-		hb.m_x += m_currentRoom->getX();
-		hb.m_y += m_currentRoom->getY();
-		m_pWindow->RenderRec(hb);
+        m_lifeBar.Render();
     }
 
     void LevelState::Warp(const WarpZone& p_warp)

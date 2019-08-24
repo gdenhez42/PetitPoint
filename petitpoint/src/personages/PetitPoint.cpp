@@ -24,7 +24,7 @@ namespace pp {
     const int PetitPoint::WALK_SPEED = 3;
 
     PetitPoint::PetitPoint()
-        : Personage(0, 0, ""),
+        : Personage(0, 0, "", 30),
           m_direction(DOWN)
     {
     }

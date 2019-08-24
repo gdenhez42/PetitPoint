@@ -13,6 +13,7 @@ if (${WIN32})
     "e:/vc_dev_libs/SDL2_image-2.0.4/include"
     "e:/vc_dev_libs/SDL2_ttf-2.0.15/include"
     include
+    include/decor
     include/tiled
     include/personages
     include/gamestates
@@ -21,6 +22,7 @@ if (${WIN32})
 else()
   link_directories(../external/tinyxml2)
   include_directories(include
+    include/decor
     include/tiled
     include/personages
     include/gamestates
@@ -37,6 +39,7 @@ add_library(PetitPointLib STATIC
   src/gamestates/GameState.cpp
   src/gamestates/TitleScreenState.cpp
   src/gamestates/InventoryState.cpp
+  src/decor/LifeBar.cpp
   src/Commands.cpp
   src/GameMachine.cpp
   src/LAnimation.cpp

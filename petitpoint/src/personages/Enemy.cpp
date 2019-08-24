@@ -10,7 +10,7 @@ namespace {
 namespace pp {
 
     Enemy::Enemy(int x, int y, const std::string& room)
-        : Personage(x,y, room)
+        : Personage(x,y, room, 30)
     {
         //ctor
     }
