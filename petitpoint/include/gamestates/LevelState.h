@@ -35,12 +35,12 @@ namespace pp {
         void Render();
         const LMap* getCurrentRoom() const {return m_currentRoom;}
         LMap* getCurrentRoom() {return m_currentRoom;}
-        bool CheckCollisions(const Rectangle&) const;
         void Warp(const WarpZone& p_Warp);
 
     private:
 
         bool initCharacters(const RessourcesRepo&);
+        void CheckCollisions();
 
         // Rooms in the level
         std::map<std::string, LMap> m_maps;

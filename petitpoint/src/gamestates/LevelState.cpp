@@ -75,6 +75,8 @@ namespace pp {
         // Update petitpoint
         m_PetitPoint.Update(*this, p_command);
 
+        CheckCollisions();
+
         // Make sure petitpoint is in the middle of the screen
         m_currentRoom->Update(m_pWindow->getWidth()/2 - m_PetitPoint.getX() - m_PetitPoint.getWidth(),
                               m_pWindow->getHeight()/2 - m_PetitPoint.getY() - m_PetitPoint.getHeight());
@@ -87,11 +89,17 @@ namespace pp {
     *******************************************************************/
     void LevelState::Render()
     {
+        std::string roomName = m_currentRoom->getName();
+        int offsetX = m_currentRoom->getX();
+        int offsetY = m_currentRoom->getY();
+
         m_currentRoom->Render();
         for(Enemy& enemy : m_enemies) {
-            enemy.Render(*this);
+            if (enemy.getRoom() == roomName) {
+                enemy.Render(offsetX, offsetY);
+            }
         }
-        m_PetitPoint.Render(*this);
+        m_PetitPoint.Render(offsetX, offsetY);
 
         m_lifeBar.Render();
     }
@@ -115,18 +123,19 @@ namespace pp {
     /********************************************************************
      Check for collisions with enemies in the room
     ********************************************************************/
-    bool LevelState::CheckCollisions(const Rectangle& p_Rec) const
+    void LevelState::CheckCollisions()
     {
+        Rectangle ppghb = m_PetitPoint.getGroundHb();
+
         for (const Enemy& enemy : m_enemies) {
 
             Rectangle ex = enemy.getGroundHb();
 
             if (enemy.getRoom() == m_currentRoom->getName() &&
-                AreColliding(ex, p_Rec)) {
-                return true;
+                AreColliding(ex, ppghb)) {
+                m_PetitPoint.GiveDamage(1);
             }
         }
-        return false;
     }
 
     /*********************************************************************

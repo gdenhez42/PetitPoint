@@ -18,6 +18,8 @@ namespace pp {
           m_y(y),
           m_hp(hp),
           m_maxHp(hp),
+          m_invinsibleFrames(0),
+          m_maxInvinsibleFrames(60),
           m_groundHb(0,0,0,0),
           m_animations(),
           m_currentAnimation(nullptr)
@@ -44,6 +46,7 @@ namespace pp {
 
         std::map<int, pp::tiled::Tile>::const_iterator it, end = tileset.m_tiles.end();
 
+        m_groundHb = Rectangle(0,0,m_width, m_height);
         bool foundGroundHb = false;
         for (it = tileset.m_tiles.begin(); it != end; ++it) {
             if (!foundGroundHb &&
@@ -54,6 +57,7 @@ namespace pp {
             }
             InitAnimation(tileset, it->second, image);
         }
+
 
         if (m_animations.empty()) {
             Log("No animations found for personnage: " + p_tilesetName);
@@ -88,15 +92,20 @@ namespace pp {
         m_animations[animName] = animation;
     }
 
-    void Personage::Render(const LevelState& p_LevelState)
+    void Personage::Render(int p_offsetX, int p_offsetY)
     {
-        const LMap* currentRoom = p_LevelState.getCurrentRoom();
-        if (m_room == currentRoom->getName()) {
-            int x = currentRoom->getX() + m_x;
-            int y = currentRoom->getY() + m_y;
+        bool isVisible = ((m_invinsibleFrames / 4) % 2) == 0;
+
+        if (isVisible) {
+            int x = p_offsetX + m_x;
+            int y = p_offsetY + m_y;
             m_currentAnimation->Render(x, y);
         }
 
+    }
+
+    void Personage::Update() {
+        if (m_invinsibleFrames > 0) m_invinsibleFrames--;
     }
 
 	Rectangle Personage::getGroundHb() const {
@@ -105,8 +114,13 @@ namespace pp {
 
     void Personage::GiveDamage(int damage)
     {
+        if (m_invinsibleFrames > 0) {
+            return;
+        }
+
         if (m_hp < damage) m_hp = 0;
         else m_hp -= damage;
+        m_invinsibleFrames = m_maxInvinsibleFrames;
     }
 
     void Personage::Heal(int hp)

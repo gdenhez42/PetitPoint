@@ -44,6 +44,8 @@ namespace pp {
     void PetitPoint::Update(LevelState& p_rLevelState,
                             const Commands& p_command)
     {
+        Personage::Update();
+
 		int toMove = WALK_SPEED;
 
         const Uint8* keyboardState = p_command.GetKeyboardState();
@@ -138,9 +140,6 @@ namespace pp {
             {
                 p_dx = 0; p_dy = 0;
             }
-			else if (p_rLevelState.CheckCollisions(test)) {
-				p_dx = 0; p_dy = 0;
-			}
             else
             {
 				Move(dx, dy);

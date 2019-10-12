@@ -39,7 +39,8 @@ namespace pp {
 
         bool Init(const RessourcesRepo& p_RessourceRepo,
                   const std::string& p_tilesetName);
-        void Render(const LevelState& p_LevelState);
+        void Render(int p_offsetX, int p_offsetY);
+        void Update();
 
         void GiveDamage(int damage);
         void Heal(int hp);
@@ -54,9 +55,11 @@ namespace pp {
         int m_width;
         int m_height;
 
-        // La points de vie du personnage
+        // Les points de vie du personnage
         int m_hp;
         int m_maxHp;
+        int m_invinsibleFrames;
+        int m_maxInvinsibleFrames;
 
         // La hitbox pour les collisions contre les murs
         Rectangle m_groundHb;
