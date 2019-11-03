@@ -2,7 +2,10 @@
 
 Just a c++ project I do for fun.
 
-build:
+## Install prerequesite for build
+sudo apt-get install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
+
+## Build
 cd build
 cmake ..
 make
@@ -10,5 +13,5 @@ make
 build with debugging info (for gdb):
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 
-run:
+## Run
 bin/PetitPoint
