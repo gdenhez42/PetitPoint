@@ -15,77 +15,85 @@ class RessourcesRepo;
 
 namespace pp::tiled
 {
-    struct Object {
-        int m_id;
-        int m_gid;
-        int m_x;
-        int m_y;
-        int m_w;
-        int m_h;
-        std::string m_type;
-        std::string m_name;
-        std::map<std::string,std::string> m_properties;
-    };
+  struct Object {
+    int m_id;
+    int m_gid;
+    int m_x;
+    int m_y;
+    int m_w;
+    int m_h;
+    std::string m_type;
+    std::string m_name;
+    std::map<std::string,std::string> m_properties;
+  };
 
-    struct ObjectGroup {
-        std::string m_name;
-        std::vector<Object> m_objects;
-    };
+  struct ObjectGroup {
+    std::string m_name;
+    std::vector<Object> m_objects;
+  };
 
-    struct Frame {
-        int m_tileId;
-    };
+  struct Frame {
+    int m_tileId;
+  };
 
-    struct Animation {
-        std::vector<Frame> m_frames;
-    };
+  struct Animation {
+    std::vector<Frame> m_frames;
+  };
 
-    struct Tile {
-        int m_id;
-        std::string m_type;
-        ObjectGroup m_objects;
-        Animation m_animation;
-    };
+  struct Tile {
+    int m_id;
+    std::string m_type;
+    ObjectGroup m_objects;
+    Animation m_animation;
+  };
 
-    struct TilesetRef {
-        int m_firstGid;
-        std::string m_source;
-    };
+  struct EmbeddedTileset {
+    int m_firstGid;
+    bool m_isRef;
+    std::string m_source;
+    std::string m_name;
+    int m_width;
+    int m_height;
+    int m_count;
+    int m_columns;
+    std::string m_image;
+    std::map<int, Tile> m_tiles;
+  };
 
-    struct Layer {
-        std::string m_name;
-        int m_width;
-        int m_height;
-        std::vector<std::vector<int> > m_data;
-    };
+  struct Layer {
+    std::string m_name;
+    int m_width;
+    int m_height;
+    std::vector<std::vector<int> > m_data;
+  };
 
-    struct TileSet
-    {
-        bool Init(const std::string& p_filename);
+  struct TileSet
+  {
+    bool Init(const std::string& p_filename);
 
-        std::string m_name;
-        int m_width;
-        int m_height;
-        int m_count;
-        int m_columns;
-        std::string m_image;
-        std::map<int, Tile> m_tiles;
-    };
+    std::string m_name;
+    int m_width;
+    int m_height;
+    int m_count;
+    int m_columns;
+    std::string m_image;
+    std::map<int, Tile> m_tiles;
+  };
 
-    struct TileMap
-    {
-        bool Init(const std::string& p_filename);
-        const TilesetRef& FindTilesetRef(int p_Gid) const;
+  struct TileMap
+  {
+    bool Init(const std::string& p_filename);
+    const EmbeddedTileset& FindTilesetRef(int p_Gid) const;
 
-        std::vector<TilesetRef> m_tilesets;
-        std::map<std::string, Layer> m_layers;
-        std::map<std::string, ObjectGroup> m_objects;
+    std::vector<EmbeddedTileset> m_tilesets;
+    std::map<std::string, Layer> m_layers;
+    std::map<std::string, ObjectGroup> m_objects;
 
-        int m_width;
-        int m_heigth;
-        int m_tilewidth;
-        int m_tileheight;
-    };
+    int m_width;
+    int m_heigth;
+    int m_tilewidth;
+    int m_tileheight;
+  };
 }
 
 #endif // TILED_H
